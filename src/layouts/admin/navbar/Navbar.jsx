@@ -1,46 +1,49 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import AdminContext from '../../../context/adminLayoutContext'
 
 export default function Navbar() {
+    const admincontext =useContext(AdminContext)
+    
   return (
     // <!-- #region(collapsed) navbar  -->
-    <nav class="navbar fixed-top navbar-dark bg-secondary top_navbar py-0">
-        <div class="container-fluid h-100 pe-0">
+    <nav className="navbar fixed-top navbar-dark bg-secondary top_navbar py-0">
+        <div className="container-fluid h-100 pe-0">
 
-            <div class="right_content h-100 py-1 bg-dark">
-                <a class="navbar-brand h-100" href="/">
-                    <img src="/assets/images/logo.png" class="h-100"/>
+            <div className="right_content h-100 py-1 bg-dark">
+                <a className="navbar-brand h-100" href="/">
+                    <img src="/assets/images/logo.png" className="h-100"/>
                 </a>
-                <div class="form-check form-switch mx-4 d-none d-md-block">
-                    <input id="handle_toggle_sidemenu" class="form-check-input pointer" type="checkbox" />
+                <div className="form-check form-switch mx-4 d-none d-md-block">
+                    <input id="handle_toggle_sidemenu" className="form-check-input pointer" type="checkbox" onChange={(e)=>admincontext.setShowSidebar(e.target.checked)} />
                 </div>
             </div>
 
-            <div class="left_content d-flex flex-row-reverse">
-                <i class="fas fa-grip-vertical fa-2x me-3 pointer" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"></i>
-                <ul class="dropdown-menu mini_menu" aria-labelledby="dropdownMenuButton1">
-                    <li class="my-2"><a class="dropdown-item d-block text-center">دانیال موسوی</a></li>
-                    <li class="my-2 d-flex justify-content-center align-items-center px-2">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <a class="dropdown-item" href="#">داشبورد</a>
+            <div className="left_content d-flex flex-row-reverse">
+                <i className="fas fa-grip-vertical fa-2x me-3 pointer" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                <ul className="dropdown-menu mini_menu" aria-labelledby="dropdownMenuButton1">
+                    <li className="my-2"><a className="dropdown-item d-block text-center">دانیال موسوی</a></li>
+                    <li className="my-2 d-flex justify-content-center align-items-center px-2">
+                        <i className="fas fa-tachometer-alt"></i>
+                        <a className="dropdown-item" href="#">داشبورد</a>
                     </li>
-                    <li class="my-2 d-flex justify-content-center align-items-center px-2">
-                        <i class="fas fa-paper-plane"></i>
-                        <a class="dropdown-item" href="#">تیکت ها</a>
+                    <li className="my-2 d-flex justify-content-center align-items-center px-2">
+                        <i className="fas fa-paper-plane"></i>
+                        <a className="dropdown-item" href="#">تیکت ها</a>
                     </li>
-                    <li class="my-2 d-flex justify-content-center align-items-center px-2">
-                        <i class="fas fa-envelope"></i>
-                        <a class="dropdown-item" href="#">پیام ها</a>
+                    <li className="my-2 d-flex justify-content-center align-items-center px-2">
+                        <i className="fas fa-envelope"></i>
+                        <a className="dropdown-item" href="#">پیام ها</a>
                     </li>
                     <hr/>
-                    <li class="d-flex justify-content-center align-items-center px-2">
-                        <i class="fas fa-power-off"></i>
-                        <a class="dropdown-item" href="#">خروج</a>
+                    <li className="d-flex justify-content-center align-items-center px-2">
+                        <i className="fas fa-power-off"></i>
+                        <a className="dropdown-item" href="#">خروج</a>
                     </li>
                 </ul>
-                <i class="far fa-bell fa-2x mx-3 pointer position-relative">
-                    <span class="alarm_count">4</span>
+                <i className="far fa-bell fa-2x mx-3 pointer position-relative">
+                    <span className="alarm_count">4</span>
                 </i>
-                <i class="fas fa-search fa-2x mx-3 pointer"></i>
+                <i className="fas fa-search fa-2x mx-3 pointer"></i>
             </div>
 
         </div>
