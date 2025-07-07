@@ -371,3 +371,6 @@ td , th {
 
 
 /* content end-------<<<<<<< */
+.ltr-direction{
+    direction: ltr !important;
+}
