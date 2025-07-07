@@ -1,19 +1,11 @@
 import React from 'react'
-import ModalPortal from '../../utils/ModalPorta'
+import ModalsConatainer from '../../components/ModalsContainer'
 
 
 export default function AddCategory() {
   return (
-    <ModalPortal>
-    <div className="modal fade" id="add_product_category_modal" tabIndex="-1" aria-hidden="true">
-        <div className="modal-dialog modal-fullscreen">
-          <div className="modal-content">
-            <div className="modal-header">
-                <h5 className="modal-title flex-fill" id="exampleModalLabel">افزودن دسته محصولات</h5>
-                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div className="modal-body">
-                <div className="container">
+    <ModalsConatainer fullScreen={true} id={'add_product_category_modal'} title={'افزودن دسته بندی جدید'}>
+            <div className="container">
                     <div className="row justify-content-center">
                         <div className="col-12 col-md-6 col-lg-8">
                             <div className="input-group mb-3 ltr-direction" >
@@ -44,7 +36,7 @@ export default function AddCategory() {
                         </div>
                         <div className="col-12 col-md-6 col-lg-8 row justify-content-center">
                             <div className="form-check form-switch col-5 col-md-2">
-                                <input className="form-check-input pointer" type="checkbox" id="flexSwitchCheckDefault" checked/>
+                                <input className="form-check-input pointer" type="checkbox" id="flexSwitchCheckDefault" />
                                 <label className="form-check-label pointer" htmlFor="flexSwitchCheckDefault">وضعیت فعال</label>
                             </div>
                         </div>
@@ -54,14 +46,7 @@ export default function AddCategory() {
 
                     </div>
                 </div>
-            </div>
-            <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
-            </div>
-          </div>
-        </div>
-    </div>
-    </ModalPortal>
+  </ModalsConatainer>
 
   )
 }
