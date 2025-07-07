@@ -1,8 +1,10 @@
 import React from 'react'
-import { createPortal } from 'react-dom'
+import ModalPortal from '../../utils/ModalPorta'
+
 
 export default function AddCategory() {
-  return createPortal(
+  return (
+    <ModalPortal>
     <div className="modal fade" id="add_product_category_modal" tabIndex="-1" aria-hidden="true">
         <div className="modal-dialog modal-fullscreen">
           <div className="modal-content">
@@ -58,7 +60,8 @@ export default function AddCategory() {
             </div>
           </div>
         </div>
-    </div>,
-    document.getElementById('modals-root')
+    </div>
+    </ModalPortal>
+
   )
 }
