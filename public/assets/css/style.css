@@ -224,7 +224,7 @@ td , th {
     transform: scale(1);
 }
 
-#sidebar_section .mini_sidebar sidebar-items{
+#sidebar_section .mini_sidebar li{
     display: flex;
     justify-content: center;
     align-items: center;
