@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import AdminContext from "../context/adminLayoutContext";
 import Category from "./Category/Category";
+import Products from "./Products/Products";
 
 export default function Content() {
   const admincontext = useContext(AdminContext);
@@ -13,7 +14,8 @@ export default function Content() {
       }`}
     >
       {/* <Dashboard/> */}
-      <Category />
+      {/* <Category /> */}
+      <Products/>
     </section>
   );
 }
