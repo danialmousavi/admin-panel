@@ -3,21 +3,21 @@ import React from "react";
 export default function ColorsTable() {
   return (
     <>
-    <div class="row justify-content-between">
-        <div class="col-10 col-md-6 col-lg-4">
-            <div class="input-group mb-3 ltr-direction" >
-                <input type="text" class="form-control" placeholder="قسمتی از عنوان را وارد کنید"/>
-                 <span class="input-group-text" >جستجو</span>
+    <div className="row justify-content-between">
+        <div className="col-10 col-md-6 col-lg-4">
+            <div className="input-group mb-3 ltr-direction" >
+                <input type="text" className="form-control" placeholder="قسمتی از عنوان را وارد کنید"/>
+                 <span className="input-group-text" >جستجو</span>
             </div>
                 </div>
-        <div class="col-2 col-md-6 col-lg-4 d-flex flex-column align-items-end">
-         <button class="btn btn-success d-flex justify-content-center align-items-center" data-bs-toggle="modal" data-bs-target="#add_color_modal">
-         <i class="fas fa-plus text-light"></i>
+        <div className="col-2 col-md-6 col-lg-4 d-flex flex-column align-items-end">
+         <button className="btn btn-success d-flex justify-content-center align-items-center" data-bs-toggle="modal" data-bs-target="#add_color_modal">
+         <i className="fas fa-plus text-light"></i>
         </button>
         </div>
     </div>    
-      <table class="table table-responsive text-center table-hover table-bordered">
-        <thead class="table-secondary">
+      <table className="table table-responsive text-center table-hover table-bordered">
+        <thead className="table-secondary">
           <tr>
             <th>#</th>
             <th>نام رنگ</th>
@@ -31,9 +31,9 @@ export default function ColorsTable() {
             <td>1</td>
             <td>مشکی</td>
             <td>#000000</td>
-            <td class="p-2">
+            <td className="p-2">
               <div
-                class="w-100 h-100 d-block"
+                className="w-100 h-100 d-block"
                 style={{ background: "#000", color: "#000" }}
               >
                 ...
@@ -41,7 +41,7 @@ export default function ColorsTable() {
             </td>
             <td>
               <i
-                class="fas fa-times text-danger mx-1 hoverable_text pointer has_tooltip"
+                className="fas fa-times text-danger mx-1 hoverable_text pointer has_tooltip"
                 title="حذف رنگ"
                 data-bs-toggle="tooltip"
                 data-bs-placement="top"
@@ -51,10 +51,10 @@ export default function ColorsTable() {
           <tr>
             <td>2</td>
             <td>قزمز</td>
-            <td class="dir_ltr">#f44336 </td>
-            <td class="p-2">
+            <td className="dir_ltr">#f44336 </td>
+            <td className="p-2">
               <div
-                class="w-100 h-100 d-block"
+                className="w-100 h-100 d-block"
                 style={{ background: "#f44336", color: " #f44336" }}
               >
                 ...
@@ -62,7 +62,7 @@ export default function ColorsTable() {
             </td>
             <td>
               <i
-                class="fas fa-times text-danger mx-1 hoverable_text pointer has_tooltip"
+                className="fas fa-times text-danger mx-1 hoverable_text pointer has_tooltip"
                 title="حذف رنگ"
                 data-bs-toggle="tooltip"
                 data-bs-placement="top"
@@ -73,31 +73,31 @@ export default function ColorsTable() {
       </table>
       <nav
         aria-label="Page navigation example"
-        class="d-flex justify-content-center"
+        className="d-flex justify-content-center"
       >
-        <ul class="pagination dir_ltr">
-          <li class="page-item">
-            <a class="page-link" href="#" aria-label="Previous">
+        <ul className="pagination dir_ltr">
+          <li className="page-item">
+            <a className="page-link" href="#" aria-label="Previous">
               <span aria-hidden="true">&raquo;</span>
             </a>
           </li>
-          <li class="page-item">
-            <a class="page-link" href="#">
+          <li className="page-item">
+            <a className="page-link" href="#">
               1
             </a>
           </li>
-          <li class="page-item">
-            <a class="page-link" href="#">
+          <li className="page-item">
+            <a className="page-link" href="#">
               2
             </a>
           </li>
-          <li class="page-item">
-            <a class="page-link" href="#">
+          <li className="page-item">
+            <a className="page-link" href="#">
               3
             </a>
           </li>
-          <li class="page-item">
-            <a class="page-link" href="#" aria-label="Next">
+          <li className="page-item">
+            <a className="page-link" href="#" aria-label="Next">
               <span aria-hidden="true">&laquo;</span>
             </a>
           </li>
