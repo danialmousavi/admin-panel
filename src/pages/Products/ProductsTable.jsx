@@ -7,7 +7,7 @@ export default function ProductsTable() {
         {
             id:"1",
             category:"aaa",
-            title:"دسته شماره فلان",
+            title:"محصول شماره 1",
             price:"1000",
             stock:"5",
             like_count:"10",
@@ -16,7 +16,7 @@ export default function ProductsTable() {
         {
             id:"2",
             category:"bbb",
-            title:"دسته شماره دو",
+            title:"محصول شماره 2",
             price:"2000",
             stock:"10",
             like_count:"20",
@@ -25,7 +25,7 @@ export default function ProductsTable() {
         {
             id:"3",
             category:"ccc",
-            title:"دسته شماره سه",
+            title:"محصول شماره سه",
             price:"3000",
             stock:"15",
             like_count:"30",
@@ -34,7 +34,7 @@ export default function ProductsTable() {
         {
             id:"4",
             category:"ddd",
-            title:"نام دسته چهار",
+            title:"محصول چهار",
             price:"4000",
             stock:"20",
             like_count:"40",
@@ -43,7 +43,7 @@ export default function ProductsTable() {
         {
             id:"5",
             category:"eee",
-            title:"نام دسته پنج",
+            title:"محصول پنج",
             price:"5000",
             stock:"25",
             like_count:"50",

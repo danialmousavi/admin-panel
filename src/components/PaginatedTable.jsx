@@ -31,7 +31,6 @@ export default function PaginatedTable({datas, dataInfo,additionalFeild,searchpa
             setInitialData(datas);
         }else{
             const filterdData=datas.filter(item=>item.title.includes(searchInput));
-            console.log(filterdData);
             
             setInitialData(filterdData)
             setCurrentPage(1); // بازنشانی صفحه به 1
@@ -89,7 +88,7 @@ export default function PaginatedTable({datas, dataInfo,additionalFeild,searchpa
                     </a>
                   </li>
                   {pages.map((page,index)=>(
-                    <li className={`page-item ${currentPage===page ? "active" : ""}`} key={index}>
+                    <li  className={`page-item ${currentPage===page ? "active" : ""}`} key={index}>
                       <span className="page-link" onClick={()=>setCurrentPage(page)}>{page}</span>
                     </li>
                   ))}
