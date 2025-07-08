@@ -2,6 +2,7 @@ import React from 'react'
 import PaginatedTable from '../../components/PaginatedTable'
 
 export default function ProductsTable() {
+  // داده های نمونه برای جدول
       const datas=[
         {
             id:"1",
@@ -33,7 +34,7 @@ export default function ProductsTable() {
         {
             id:"4",
             category:"ddd",
-            title:"دسته شماره چهار",
+            title:"نام دسته چهار",
             price:"4000",
             stock:"20",
             like_count:"40",
@@ -42,7 +43,7 @@ export default function ProductsTable() {
         {
             id:"5",
             category:"eee",
-            title:"دسته شماره پنج",
+            title:"نام دسته پنج",
             price:"5000",
             stock:"25",
             like_count:"50",
@@ -67,9 +68,18 @@ export default function ProductsTable() {
       title:"عملیات",
       elements:()=>additionalElements()
     }
+
+    //اطلاعات مربوط به صفحه بندی و سرچ
+    const searchparams={
+      title:"جستجو",
+      placeholder:"قسمتی از عنوان را وارد کنید",
+      searchFeild:"title",
+      itemsPerPage:2,
+    }
   return (
     <>
-        <PaginatedTable datas={datas} dataInfo={dataInfo} additionalFeild={additionalFeild}/>
+    
+        <PaginatedTable datas={datas} dataInfo={dataInfo} additionalFeild={additionalFeild} searchparams={searchparams}/>
 
     </>
   )
