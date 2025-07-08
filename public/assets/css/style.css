@@ -374,3 +374,6 @@ td , th {
 .ltr-direction{
     direction: ltr !important;
 }
+.disable{
+    pointer-events: none !important;
+}
