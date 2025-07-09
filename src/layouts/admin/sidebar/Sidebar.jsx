@@ -35,7 +35,7 @@ export default function Sidebar() {
 
                 <SidebarItems icon='fas fa-users' title='مشاهده کاربران' active={false} targetPath={'/users'}/>
                 <SidebarItems icon='fas fa-user-tag' title='نقش ها' active={false} targetPath={'/roles'}/>
-                <SidebarItems icon='fas fa-shield-alt' title='مجوز ها' active={false} targetPath={'/test'}/>
+                <SidebarItems icon='fas fa-shield-alt' title='مجوز ها' active={false} targetPath={'/permisions'}/>
 
 
                 <SidebarGroupTitle title="ارتباطات"/>

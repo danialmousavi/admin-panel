@@ -10,7 +10,7 @@ import Orders from "./pages/Orders/Orders";
 import Products from "./pages/Products/Products";
 import Roles from "./pages/Roles/Roles";
 import Users from "./pages/Users/Users";
-
+import Permissions from "./pages/Permisions/permisions"
 const Routes=[
     {path:"/",element:<Dashboard/>},
     {path:"/products",element:<Products/>},
@@ -24,6 +24,7 @@ const Routes=[
     {path:"/delivery",element:<Deliveries/>},
     {path:"/users",element:<Users/>},
     {path:"/roles",element:<Roles/>},
+    {path:"/permisions",element:<Permissions/>},
     {path:"*",element:<Dashboard/>},
     
 ]
