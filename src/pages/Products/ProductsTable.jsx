@@ -75,6 +75,7 @@ export default function ProductsTable() {
       placeholder:"قسمتی از عنوان را وارد کنید",
       searchFeild:"title",
       itemsPerPage:2,
+      id:"add_product_modal"
     }
   return (
     <>

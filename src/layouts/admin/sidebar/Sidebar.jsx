@@ -21,7 +21,7 @@ export default function Sidebar() {
 
                 <SidebarItems icon='fas fa-palette' title='مدیریت رنگ ها' active={false} targetPath={'/colors'}/>
                 <SidebarItems icon='fab fa-pagelines' title='مدیریت گارانتی ها' active={false} targetPath={'/guarantee'}/>
-                <SidebarItems icon='fas fa-copyright' title='مدیریت برند ها' active={false}  targetPath={'/test'}/>
+                <SidebarItems icon='fas fa-copyright' title='مدیریت برند ها' active={false}  targetPath={'/brands'}/>
                 <SidebarItems icon='fas fa-percentage' title='مدیریت تخفیف ها' active={false} targetPath={'/test'}/>
 
                 <SidebarGroupTitle title="سفارشات و سبد"/>

@@ -74,6 +74,7 @@ export default function CategoryTable() {
       placeholder:"قسمتی از عنوان را وارد کنید",
       searchFeild:"title",
       itemsPerPage:2,
+      id:"add_product_category_modal"
     }
   return (
     <>

@@ -46,7 +46,7 @@ export default function PaginatedTable({datas, dataInfo,additionalFeild,searchpa
                     </div>
                 </div>
                 <div className="col-2 col-md-6 col-lg-4 d-flex flex-column align-items-end">
-                    <button className="btn btn-success d-flex justify-content-center align-items-center" data-bs-toggle="modal" data-bs-target="#add_product_modal">
+                    <button className="btn btn-success d-flex justify-content-center align-items-center" data-bs-toggle="modal" data-bs-target={`#${searchparams.id}`}>
                         <i className="fas fa-plus text-light"></i>
                     </button>
                 </div>
