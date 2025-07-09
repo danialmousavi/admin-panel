@@ -1,4 +1,5 @@
 import Brands from "./pages/Brands/Brands";
+import Cart from "./pages/Cart/Cart";
 import Category from "./pages/Category/Category";
 import Colors from "./pages/Colors/Colors";
 import Dashboard from "./pages/Dashboard/Dashboard";
@@ -14,6 +15,8 @@ const Routes=[
     {path:"/guarantee",element:<Guarantee/>},
     {path:"/brands",element:<Brands/>},
     {path:"/discounts",element:<Discounts/>},
+    {path:"/cart",element:<Cart/>},
+
     {path:"*",element:<Dashboard/>},
     
 ]
