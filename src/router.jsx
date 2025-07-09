@@ -8,6 +8,7 @@ import Discounts from "./pages/Discounts/Discounts";
 import Guarantee from "./pages/Guarantee/Guarantee";
 import Orders from "./pages/Orders/Orders";
 import Products from "./pages/Products/Products";
+import Users from "./pages/Users/Users";
 
 const Routes=[
     {path:"/",element:<Dashboard/>},
@@ -20,6 +21,7 @@ const Routes=[
     {path:"/cart",element:<Cart/>},
     {path:"/orders",element:<Orders/>},
     {path:"/delivery",element:<Deliveries/>},
+    {path:"/users",element:<Users/>},
     {path:"*",element:<Dashboard/>},
     
 ]
