@@ -8,6 +8,7 @@ import Discounts from "./pages/Discounts/Discounts";
 import Guarantee from "./pages/Guarantee/Guarantee";
 import Orders from "./pages/Orders/Orders";
 import Products from "./pages/Products/Products";
+import Roles from "./pages/Roles/Roles";
 import Users from "./pages/Users/Users";
 
 const Routes=[
@@ -22,6 +23,7 @@ const Routes=[
     {path:"/orders",element:<Orders/>},
     {path:"/delivery",element:<Deliveries/>},
     {path:"/users",element:<Users/>},
+    {path:"/roles",element:<Roles/>},
     {path:"*",element:<Dashboard/>},
     
 ]
