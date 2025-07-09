@@ -3,6 +3,7 @@ import Cart from "./pages/Cart/Cart";
 import Category from "./pages/Category/Category";
 import Colors from "./pages/Colors/Colors";
 import Dashboard from "./pages/Dashboard/Dashboard";
+import Deliveries from "./pages/Deliveries/Deliveries";
 import Discounts from "./pages/Discounts/Discounts";
 import Guarantee from "./pages/Guarantee/Guarantee";
 import Orders from "./pages/Orders/Orders";
@@ -18,7 +19,7 @@ const Routes=[
     {path:"/discounts",element:<Discounts/>},
     {path:"/cart",element:<Cart/>},
     {path:"/orders",element:<Orders/>},
-
+    {path:"/delivery",element:<Deliveries/>},
     {path:"*",element:<Dashboard/>},
     
 ]

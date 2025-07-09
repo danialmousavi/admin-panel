@@ -29,7 +29,7 @@ export default function Sidebar() {
                 <SidebarItems icon='fas fa-shopping-cart' title='مدیریت سبد ها' active={false} targetPath={'/cart'}/>
 
                 <SidebarItems icon='fas fa-luggage-cart' title='مدیریت سفارشات' active={false} targetPath={'/orders'}/>
-                <SidebarItems icon='fas fa-truck' title='مدیریت نحوه ارسال' active={false} targetPath={'/test'}/>
+                <SidebarItems icon='fas fa-truck' title='مدیریت نحوه ارسال' active={false} targetPath={'/delivery'}/>
 
                 <SidebarGroupTitle title="کاربران و همکاران"/>
 
