@@ -11,6 +11,7 @@ import Products from "./pages/Products/Products";
 import Roles from "./pages/Roles/Roles";
 import Users from "./pages/Users/Users";
 import Permissions from "./pages/Permisions/permisions"
+import Questions from "./pages/Questions/Questions";
 const Routes=[
     {path:"/",element:<Dashboard/>},
     {path:"/products",element:<Products/>},
@@ -25,6 +26,7 @@ const Routes=[
     {path:"/users",element:<Users/>},
     {path:"/roles",element:<Roles/>},
     {path:"/permisions",element:<Permissions/>},
+    {path:"/questions",element:<Questions/>},
     {path:"*",element:<Dashboard/>},
     
 ]
