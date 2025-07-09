@@ -12,6 +12,7 @@ import Roles from "./pages/Roles/Roles";
 import Users from "./pages/Users/Users";
 import Permissions from "./pages/Permisions/permisions"
 import Questions from "./pages/Questions/Questions";
+import Comments from "./pages/Comments/Comments";
 const Routes=[
     {path:"/",element:<Dashboard/>},
     {path:"/products",element:<Products/>},
@@ -27,6 +28,8 @@ const Routes=[
     {path:"/roles",element:<Roles/>},
     {path:"/permisions",element:<Permissions/>},
     {path:"/questions",element:<Questions/>},
+    {path:"/comments",element:<Comments/>},
+
     {path:"*",element:<Dashboard/>},
     
 ]

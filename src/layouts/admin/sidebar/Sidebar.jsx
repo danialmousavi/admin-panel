@@ -41,7 +41,7 @@ export default function Sidebar() {
                 <SidebarGroupTitle title="ارتباطات"/>
 
                 <SidebarItems icon='fas fa-question-circle' title='سوال ها' active={false} targetPath={'/questions'}/>
-                <SidebarItems icon='fas fa-comment' title='نظرات' active={false} targetPath={'/test'}/>
+                <SidebarItems icon='fas fa-comment' title='نظرات' active={false} targetPath={'/comments'}/>
 
                 {/* <li className="py-2 btn-group dropstart pe-4">
                     <i className="ms-3 icon fas fa-check text-light"></i>
