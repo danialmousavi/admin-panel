@@ -2,8 +2,10 @@ import { useFormik } from 'formik';
 import React from 'react';
 import LoginSchema from '../../configs/LoginSchema';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
+  const navigate=useNavigate()
   const formik=useFormik({
     initialValues:{
       phone:"",
@@ -15,7 +17,13 @@ export default function Login() {
       axios.post("https://ecomadminapi.azhadev.ir/api/auth/login",{
         ...values,
         remember:values.remember?1:0
-      }).then((res=>console.log(res)
+      }).then((res=>{
+        console.log(res);
+        if(res.status==200){
+          localStorage.setItem("loginToken",JSON.stringify(res.data.token))
+          navigate("/")
+        }
+      }
       ))
     },
     validationSchema:LoginSchema

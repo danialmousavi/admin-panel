@@ -1,19 +1,40 @@
-import React, { useContext } from 'react'
-import Navbar from './navbar/Navbar'
-import Sidebar from './sidebar/Sidebar'
-import AdminContext, { AdminLayoutContainer } from '../../context/adminLayoutContext'
-import Content from '../../pages/Content'
-
+import React, { useContext, useEffect, useState } from "react";
+import Navbar from "./navbar/Navbar";
+import Sidebar from "./sidebar/Sidebar";
+import AdminContext, {
+  AdminLayoutContainer,
+} from "../../context/adminLayoutContext";
+import Content from "../../pages/Content";
+import { Navigate, useNavigate } from "react-router-dom";
+import useAuthLogin from "../../hooks/useAuthLogin";
 
 export default function Index() {
-
+  const [isLogin,loading]=useAuthLogin()
   return (
     <>
-     <AdminLayoutContainer>
-        <Navbar/>
-        <Sidebar/>
-        <Content/>
-     </AdminLayoutContainer>
+      <AdminLayoutContainer>
+        {loading ? (
+          <>
+            <div className="aler alert-info  d-flex justify-content-center align-items-center" style={{height:"100px"}}>
+              <h1>لطفا صبر کنید</h1>
+            </div>
+          </>
+        ) : (
+          <>
+            {isLogin ? (
+              <>
+                <Navbar />
+                <Sidebar />
+                <Content />
+              </>
+            ) : (
+              <>
+                <Navigate to="/auth/login" />
+              </>
+            )}
+          </>
+        )}
+      </AdminLayoutContainer>
     </>
-  )
+  );
 }
