@@ -2,12 +2,22 @@ import React, { useContext } from "react";
 import AdminContext from "../context/adminLayoutContext";
 import Category from "./Category/Category";
 import Products from "./Products/Products";
-import { useRoutes } from "react-router-dom";
-import Routes from "../router";
-
+import { Route, Routes, useRoutes } from "react-router-dom";
+import Guarantee from "./Guarantee/Guarantee";
+import Brands from "./Brands/Brands";
+import Discounts from "./Discounts/Discounts";
+import Cart from "./Cart/Cart";
+import Orders from "./Orders/Orders";
+import Deliveries from "./Deliveries/Deliveries";
+import Users from "./Users/Users";
+import Roles from "./Roles/Roles";
+import Permisions from "./Permisions/Permisions";
+import Questions from "./Questions/Questions";
+import Comments from "./Comments/Comments";
+import Dashboard from "./Dashboard/Dashboard";
+import Colors from "./Colors/Colors";
 export default function Content() {
   const admincontext = useContext(AdminContext);
-  const router=useRoutes(Routes);
   return (
     <section
       id="content_section"
@@ -15,7 +25,24 @@ export default function Content() {
         admincontext.showSidebar ? "with_sidebar" : ""
       }`}
     >
-      {router}
+          <Routes>
+            <Route path='/' element={<Dashboard/>}/>
+            <Route path='/products' element={<Products/>}/>
+            <Route path='/category' element={<Category/>}/>
+            <Route path='/colors' element={<Colors/>}/>
+            <Route path='/guarantee' element={<Guarantee/>}/>
+            <Route path='/brands' element={<Brands/>}/>
+            <Route path='/discounts' element={<Discounts/>}/>
+            <Route path='/cart' element={<Cart/>}/>
+            <Route path='/orders' element={<Orders/>}/>
+            <Route path='/delivery' element={<Deliveries/>}/>
+            <Route path='/users' element={<Users/>}/>
+            <Route path='/roles' element={<Roles/>}/>
+            <Route path='/permisions' element={<Permisions/>}/>
+            <Route path='/questions' element={<Questions/>}/>
+            <Route path='/comments' element={<Comments/>}/>
+            <Route path='*' element={<Dashboard/>}/>
+          </Routes>
     </section>
   );
 }

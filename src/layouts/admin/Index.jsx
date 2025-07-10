@@ -10,8 +10,8 @@ export default function Index() {
   return (
     <>
      <AdminLayoutContainer>
-       <Navbar/>
-      <Sidebar/>
+        <Navbar/>
+        <Sidebar/>
         <Content/>
      </AdminLayoutContainer>
     </>

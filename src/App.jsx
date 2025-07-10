@@ -1,9 +1,11 @@
 import React from 'react'
-import AdminPanel from './layouts/admin'
+import Index from './layouts/admin'
+import AuthLayout from './layouts/Auth/AuthLayout'
 export default function App() {
   return (
     <>
-      <AdminPanel />
+      <AuthLayout/>
+      {/* <Index /> */}
     </>
   )
 }

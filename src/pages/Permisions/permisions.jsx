@@ -1,7 +1,7 @@
 import React from 'react'
 import PermisionsTable from './PermisionsTable'
 
-export default function permisions() {
+export default function Permisions() {
   return (
     <>
             <div id="manage_permission_section" className="manage_permission_section main_section">
