@@ -3,6 +3,7 @@ import React from 'react';
 import LoginSchema from '../../configs/LoginSchema';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 export default function Login() {
   const navigate=useNavigate()
@@ -12,8 +13,10 @@ export default function Login() {
       password:"",
       remember:false
     },
-    onSubmit: (values) => {
+    onSubmit: (values,submitMethods) => {
       console.log('Form submitted:', values);
+      console.log("submit methodssssssss",submitMethods);
+      
       axios.post("https://ecomadminapi.azhadev.ir/api/auth/login",{
         ...values,
         remember:values.remember?1:0
@@ -21,7 +24,16 @@ export default function Login() {
         console.log(res);
         if(res.status==200){
           localStorage.setItem("loginToken",JSON.stringify(res.data.token))
+          submitMethods.setSubmitting(false);
           navigate("/")
+        }else{
+          Swal.fire({
+            title: 'خطا',
+            text: res.data.message,
+            icon: 'error',
+            confirmButtonText: 'باشه'
+          })
+          submitMethods.setSubmitting(false);
         }
       }
       ))
@@ -58,7 +70,7 @@ export default function Login() {
                 <label className="form-check-label" htmlFor="flexSwitchCheckDefault">به خاطر سپردن</label>
                 <input onChange={formik.handleChange} name='remember' className="form-check-input" type="checkbox" id="flexSwitchCheckDefault"/>
               </div>
-              <button type="submit" className="btn btn-primary w-100">ورود</button>
+              <button type="submit" className="btn btn-primary w-100" disabled={formik.isSubmitting}>{formik.isSubmitting?"لطفا صبر کنید!":"ورود"}</button>
             </form>
           </div>
 
