@@ -17,7 +17,6 @@ export default function useAuthLogin() {
           },
         })
         .then((res) => {
-          console.log(res);
           setIsLogin(true);
           setLoading(false);
         })

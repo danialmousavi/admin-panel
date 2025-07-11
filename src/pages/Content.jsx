@@ -28,7 +28,9 @@ export default function Content() {
           <Routes>
             <Route path='/' element={<Dashboard/>}/>
             <Route path='/products' element={<Products/>}/>
-            <Route path='/category' element={<Category/>}/>
+            <Route path='/category' element={<Category/>}>
+              <Route path=':categoryId' element={<Category/>}/>
+            </Route>
             <Route path='/colors' element={<Colors/>}/>
             <Route path='/guarantee' element={<Guarantee/>}/>
             <Route path='/brands' element={<Brands/>}/>

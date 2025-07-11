@@ -14,14 +14,11 @@ export default function Login() {
       remember:false
     },
     onSubmit: (values,submitMethods) => {
-      console.log('Form submitted:', values);
-      console.log("submit methodssssssss",submitMethods);
       
       axios.post("https://ecomadminapi.azhadev.ir/api/auth/login",{
         ...values,
         remember:values.remember?1:0
       }).then((res=>{
-        console.log(res);
         if(res.status==200){
           localStorage.setItem("loginToken",JSON.stringify(res.data.token))
           submitMethods.setSubmitting(false);

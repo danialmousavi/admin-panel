@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import PaginatedTable from "../../components/PaginatedTable";
 import axios from "axios";
 import ShowInMenu from "./ShowInMenu";
 import Actions from "./Actions";
+import { useParams } from "react-router-dom";
 
 export default function CategoryTable() {
   const [datas, setDatas] = useState([]);
-  const [id, setId] = useState(null);
+  const params=useParams();
+  console.log(params);
+  
+const id = params.categoryId || null;
   useEffect(() => {
     const userToken = JSON.parse(localStorage.getItem("loginToken"));
     axios
@@ -54,6 +58,11 @@ export default function CategoryTable() {
   };
   return (
     <>
+      {params.categoryId ? (
+        <h5 className="text-center my-3">زیرمجموعه دسته بندی </h5>
+      ) : (
+        <></>
+      )}
       {datas ? (
         <>
           <PaginatedTable
@@ -62,7 +71,6 @@ export default function CategoryTable() {
             additionalFeild={additionalFeild}
             searchparams={searchparams}
           />
-          {console.log(datas)}
         </>
       ) : (
         <p>Loading...</p>

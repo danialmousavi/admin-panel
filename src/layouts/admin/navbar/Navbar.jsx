@@ -25,7 +25,6 @@ export default function Navbar() {
                         "Authorization": `Bearer ${userToken}`,
                     },
                 }).then(res=>{
-                    console.log(res);
                     if(res.status==200){
                         localStorage.removeItem("loginToken")
                         Swal.fire({
