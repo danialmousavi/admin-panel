@@ -35,7 +35,7 @@ export default function PaginatedTable({datas, dataInfo,additionalFeild,searchpa
             setInitialData(filterdData)
             setCurrentPage(1); // بازنشانی صفحه به 1
         }
-    },[searchInput])
+    },[searchInput,datas])
   return (
     <>
             <div className="row justify-content-between">
@@ -55,25 +55,27 @@ export default function PaginatedTable({datas, dataInfo,additionalFeild,searchpa
             <thead className="table-secondary">
                 <tr>
                     {dataInfo.map((item,index)=>(
-                        <th key={item.feild}>{item.title}</th>
+                        <th key={index}>{item.title}</th>
                     ))}
                     {additionalFeild && (
-                        <th>{additionalFeild.title}</th>
+                        additionalFeild.map((item,index)=>(
+                            <th key={index}>{item.title}</th>
+                        ))
                     )}
                 </tr>
             </thead>
                 <tbody>
                     {tableData.map(data=>(
-                        <tr>
+                        <tr key={data.id}>
                             {/* ستون‌های جدول به‌صورت داینامیک بر اساس dataInfo ساخته می‌شوند
                            این روش باعث می‌شود جدول قابل تنظیم و قابل استفاده مجدد باشد */}
                             {dataInfo.map((item,index)=>(
                                 <td key={item.feild}>{data[item.feild]}</td>
                             ))}
                             {additionalFeild && (
-                                <td>
-                                    {additionalFeild.elements()}
-                                </td>
+                                additionalFeild.map((item,index)=>(
+                                    <td key={index}>{item.elements(data)}</td>
+                                ))
                             )}
                         </tr>
                     ))}

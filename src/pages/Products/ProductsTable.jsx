@@ -64,10 +64,12 @@ export default function ProductsTable() {
         </>
       )
     }
-    const additionalFeild={
+    const additionalFeild=[
+      {
       title:"عملیات",
       elements:()=>additionalElements()
     }
+    ]
 
     //اطلاعات مربوط به صفحه بندی و سرچ
     const searchparams={
