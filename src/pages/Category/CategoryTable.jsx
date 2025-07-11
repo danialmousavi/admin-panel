@@ -10,7 +10,7 @@ import moment from "jalali-moment";
 import ConvertDateToJalali from "../../components/ConvertDate";
 import Loading from "../../components/Loading";
 
-export default function CategoryTable() {
+export default function CategoryTable({forceReRender}) {
   const [datas, setDatas] = useState([]);
   const params=useParams();
   const [loading, setLoading] = useState(false);
@@ -58,12 +58,12 @@ useEffect(() => {
   };
 
   fetchData();
-}, [id]);
+}, [id,forceReRender]);
 
   const dataInfo = [
     { feild: "id", title: "#" },
     { feild: "title", title: "عنوان محصول" },
-    { feild: "parent_id", title: "دسته والد" },
+    // { feild: "parent_id", title: "دسته والد" },
   ];
 
 
@@ -87,7 +87,7 @@ useEffect(() => {
     title: "جستجو",
     placeholder: "قسمتی از عنوان را وارد کنید",
     searchFeild: "title",
-    itemsPerPage: 2,
+    itemsPerPage: 5,
     id: "add_product_category_modal",
   };
 return (
