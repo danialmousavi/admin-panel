@@ -2,7 +2,7 @@ import React, { use, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import CategoryContext from "../../context/CategoryContext";
 
-export default function Actions({ rowData }) {
+export default function Actions({ rowData , handleDeleteCategory}) {
   const { id } = rowData;
   const navigate = useNavigate();
   const params = useParams();
@@ -39,6 +39,7 @@ export default function Actions({ rowData }) {
         title="حذف دسته"
         data-bs-toggle="tooltip"
         data-bs-placement="top"
+        onClick={()=>handleDeleteCategory(rowData)}
       ></i>
     </>
   );

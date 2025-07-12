@@ -10,12 +10,12 @@ import moment from "jalali-moment";
 import ConvertDateToJalali from "../../components/ConvertDate";
 import Loading from "../../components/Loading";
 
-export default function CategoryTable({forceReRender}) {
+export default function CategoryTable({forceReRender,setForceReRender}) {
   const [datas, setDatas] = useState([]);
   const params=useParams();
   const [loading, setLoading] = useState(false);
   const id = params.categoryId || null;
-
+//get categories 
 useEffect(() => {
   const fetchData = async () => {
     setLoading(true); // شروع لودینگ
@@ -60,8 +60,48 @@ useEffect(() => {
   fetchData();
 }, [id,forceReRender]);
 
+//delete category 
+const handleDeleteCategory=(categoryData)=>{
+  const userToken=JSON.parse(localStorage.getItem("loginToken"))
+  Swal.fire({
+    title:"حذف دسته بندی",
+    text:"آیا از حذف دسته بندی اطمینان دارید؟",
+    icon:"question",
+    confirmButtonText:"تایید",
+    cancelButtonText:"کنسل",
+    showCancelButton:true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33', 
+  }).then(res=>{
+    if(res.isConfirmed){
+      
+      axios.delete(`https://ecomadminapi.azhadev.ir/api/admin/categories/${categoryData.id}`,{
+        headers:{
+          "Authorization":`Bearer ${userToken}`
+        }
+      }).then(res=>{
+        console.log(res);
+        if(res.status>=200&&res.status<300){
+          Swal.fire({
+          title:"دسته بندی با موفقیت حذف شد",
+          icon:"success"
+        })
+        setForceReRender(prev=>prev+1)
+        }else{
+          Swal.fire({
+            title:"متاسفیم",
+            text:"خطایی پیش آمده است",
+            icon:"error"
+          })
+        }
+      })
+      
+    }
+  })
+  }
 
-  const dataInfo = [
+
+const dataInfo = [
     { feild: "id", title: "#" },
     { feild: "title", title: "عنوان محصول" },
     // { feild: "parent_id", title: "دسته والد" },
@@ -79,7 +119,7 @@ useEffect(() => {
     },
     {
       title: "عملیات",
-      elements: (rowData) => <Actions rowData={rowData}/>,
+      elements: (rowData) => <Actions rowData={rowData} handleDeleteCategory={handleDeleteCategory}/>,
     },
   ];
 
