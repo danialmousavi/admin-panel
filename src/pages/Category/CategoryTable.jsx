@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from "react";
+import React, { use, useContext, useEffect, useState } from "react";
 import PaginatedTable from "../../components/PaginatedTable";
 import axios from "axios";
 import ShowInMenu from "./ShowInMenu";
@@ -9,12 +9,15 @@ import Swal from "sweetalert2";
 import moment from "jalali-moment";
 import ConvertDateToJalali from "../../components/ConvertDate";
 import Loading from "../../components/Loading";
+import CategoryContext from "../../context/CategoryContext";
 
 export default function CategoryTable({forceReRender,setForceReRender}) {
   const [datas, setDatas] = useState([]);
   const params=useParams();
   const [loading, setLoading] = useState(false);
   const id = params.categoryId || null;
+  const {setCatId}=useContext(CategoryContext)
+
 //get categories 
 useEffect(() => {
   const fetchData = async () => {
@@ -145,12 +148,19 @@ return (
     ) : (
         <>
         {datas.length?(
-      <PaginatedTable
-        datas={datas}
-        dataInfo={dataInfo}
-        additionalFeild={additionalFeild}
-        searchparams={searchparams}
-      />
+          <>
+
+          <PaginatedTable
+            datas={datas}
+            dataInfo={dataInfo}
+            additionalFeild={additionalFeild}
+            searchparams={searchparams}
+          >
+            <button className="btn btn-success d-flex justify-content-center align-items-center" data-bs-toggle="modal" data-bs-target={`#${searchparams.id}`} onClick={()=>setCatId(null)}>
+                <i className="fas fa-plus text-light"></i>
+            </button>
+          </PaginatedTable>
+      </>
         ):(<>
         <h1 className="text-center text-danger">اطلاعاتی در دسترس نیست!</h1>
         </>)}

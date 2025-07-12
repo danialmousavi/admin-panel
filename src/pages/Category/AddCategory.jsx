@@ -26,6 +26,7 @@ export default function AddCategory({ setForceReRender }) {
 
   const {catId,setCatId}=useContext(CategoryContext)//category id for editing the category
   const [editCategory,setEditCategory]=useState(null)
+  const [isLoadingEditCategory, setIsLoadingEditCategory] = useState(false);
   // Fetch all categories to populate parent dropdown
   useEffect(() => {
     const userToken = JSON.parse(localStorage.getItem("loginToken"));
@@ -68,6 +69,7 @@ useEffect(() => {
   //get one category for editing
   useEffect(()=>{
     if(catId){
+      setIsLoadingEditCategory(true);
       const userToken=JSON.parse(localStorage.getItem("loginToken"))
       axios.get(`https://ecomadminapi.azhadev.ir/api/admin/categories/${catId}`,{
         headers:{
@@ -77,17 +79,29 @@ useEffect(() => {
         console.log(res);
         setEditCategory(res.data.data)
       }
-      )
+      ).finally(()=>{
+        setIsLoadingEditCategory(false);
+
+      })
     }
   },[catId])
   return (
     <ModalsConatainer
       fullScreen={true}
       id={"add_product_category_modal"}
-      title={catId?`ویرایش${editCategory?editCategory.title:""}`:"افزودن دسته بندی جدید"}
+      title={catId? `ویرایش ${editCategory ? editCategory.title : ""}`: "افزودن دسته بندی جدید"}
     >
       {/* Formik Form */}
-      <Formik
+    {isLoadingEditCategory?(<>
+        <div className="text-center my-5">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">در حال بارگذاری...</span>
+        </div>
+        <p className="mt-3">در حال دریافت اطلاعات دسته بندی...</p>
+      </div>
+    </>):(
+      <>
+            <Formik
         initialValues={reInirialValues || initialValues}
         validationSchema={categorySchema}
         enableReinitialize // Allows form values to reset when initialValues change
@@ -329,6 +343,8 @@ useEffect(() => {
           </Form>
         )}
       </Formik>
+      </>
+    )}
     </ModalsConatainer>
   );
 }

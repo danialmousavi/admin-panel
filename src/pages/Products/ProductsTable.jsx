@@ -82,7 +82,11 @@ export default function ProductsTable() {
   return (
     <>
     
-        <PaginatedTable datas={datas} dataInfo={dataInfo} additionalFeild={additionalFeild} searchparams={searchparams}/>
+        <PaginatedTable datas={datas} dataInfo={dataInfo} additionalFeild={additionalFeild} searchparams={searchparams}>
+            <button className="btn btn-success d-flex justify-content-center align-items-center" data-bs-toggle="modal" data-bs-target={`#${searchparams.id}`} onClick={()=>setCatId(null)}>
+                <i className="fas fa-plus text-light"></i>
+            </button>
+        </PaginatedTable>
 
     </>
   )

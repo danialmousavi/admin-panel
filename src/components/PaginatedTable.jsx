@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
-import CategoryContext from '../context/CategoryContext';
 
-export default function PaginatedTable({datas, dataInfo,additionalFeild,searchparams}) {
+export default function PaginatedTable({datas, dataInfo,additionalFeild,searchparams,children}) {
     const itemsPerPage = searchparams.itemsPerPage; // تعداد آیتم‌ها در هر صفحه
     const [initialData,setInitialData]=useState(datas);
     const [currentPage, setCurrentPage] = useState(1);
@@ -9,7 +8,6 @@ export default function PaginatedTable({datas, dataInfo,additionalFeild,searchpa
     const [pages,setPages]=useState([]);
     const [pageCount,setPageCount]=useState(1); 
     const [searchInput, setSearchInput] = useState("");
-    const {setCatId}=useContext(CategoryContext)
     useEffect(()=>{
         let pCount= Math.ceil(initialData.length / itemsPerPage);
         setPageCount(pCount);
@@ -47,9 +45,7 @@ export default function PaginatedTable({datas, dataInfo,additionalFeild,searchpa
                     </div>
                 </div>
                 <div className="col-2 col-md-6 col-lg-4 d-flex flex-column align-items-end">
-                    <button className="btn btn-success d-flex justify-content-center align-items-center" data-bs-toggle="modal" data-bs-target={`#${searchparams.id}`} onClick={()=>setCatId(null)}>
-                        <i className="fas fa-plus text-light"></i>
-                    </button>
+                    {children}
                 </div>
             </div>    
         <table className="table table-responsive text-center table-hover table-bordered">
