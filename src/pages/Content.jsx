@@ -16,6 +16,7 @@ import Questions from "./Questions/Questions";
 import Comments from "./Comments/Comments";
 import Dashboard from "./Dashboard/Dashboard";
 import Colors from "./Colors/Colors";
+import AddCategoryAttribute from "./Category/Attr/AddCategoryAttribute";
 export default function Content() {
   const admincontext = useContext(AdminContext);
   return (
@@ -31,6 +32,8 @@ export default function Content() {
             <Route path='/category' element={<Category/>}>
               <Route path=':categoryId' element={<Category/>}/>
             </Route>
+            <Route path='/category/:categoryId/attr' element={<AddCategoryAttribute/>}/>
+
             <Route path='/colors' element={<Colors/>}/>
             <Route path='/guarantee' element={<Guarantee/>}/>
             <Route path='/brands' element={<Brands/>}/>
