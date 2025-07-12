@@ -1,10 +1,12 @@
-import React, { use } from "react";
+import React, { use, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import CategoryContext from "../../context/CategoryContext";
 
 export default function Actions({ rowData }) {
   const { id } = rowData;
   const navigate = useNavigate();
   const params = useParams();
+  const {catId,setCatId}=useContext(CategoryContext)
   return (
     <>
       {params.categoryId ? (
@@ -24,6 +26,7 @@ export default function Actions({ rowData }) {
         data-bs-toggle="modal"
         data-bs-placement="top"
         data-bs-target="#add_product_category_modal"
+        onClick={()=>setCatId(rowData.id)}
       ></i>
       <i
         className="fas fa-plus text-success mx-1 hoverable_text pointer has_tooltip"

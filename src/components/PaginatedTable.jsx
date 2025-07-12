@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import CategoryContext from '../context/CategoryContext';
 
 export default function PaginatedTable({datas, dataInfo,additionalFeild,searchparams}) {
     const itemsPerPage = searchparams.itemsPerPage; // تعداد آیتم‌ها در هر صفحه
@@ -8,7 +9,7 @@ export default function PaginatedTable({datas, dataInfo,additionalFeild,searchpa
     const [pages,setPages]=useState([]);
     const [pageCount,setPageCount]=useState(1); 
     const [searchInput, setSearchInput] = useState("");
-
+    const {setCatId}=useContext(CategoryContext)
     useEffect(()=>{
         let pCount= Math.ceil(initialData.length / itemsPerPage);
         setPageCount(pCount);
@@ -46,7 +47,7 @@ export default function PaginatedTable({datas, dataInfo,additionalFeild,searchpa
                     </div>
                 </div>
                 <div className="col-2 col-md-6 col-lg-4 d-flex flex-column align-items-end">
-                    <button className="btn btn-success d-flex justify-content-center align-items-center" data-bs-toggle="modal" data-bs-target={`#${searchparams.id}`}>
+                    <button className="btn btn-success d-flex justify-content-center align-items-center" data-bs-toggle="modal" data-bs-target={`#${searchparams.id}`} onClick={()=>setCatId(null)}>
                         <i className="fas fa-plus text-light"></i>
                     </button>
                 </div>
