@@ -5,46 +5,73 @@ import * as Yup from "yup";
 import categorySchema from "../../configs/CategorySchema";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useParams } from "react-router-dom";
 
-export default function AddCategory({setForceReRender}) {
-    const [parents,setParents]=useState([]);
-    useEffect(()=>{
-        const userToken = JSON.parse(localStorage.getItem("loginToken"));
-        axios.get("https://ecomadminapi.azhadev.ir/api/admin/categories", {
-            headers: {
-                Authorization: `Bearer ${userToken}`,
-            },
-        }).then(res=>{
-            if (res.status === 200) {
-                setParents(res.data.data);
-            } else {
-                // Handle non-200 responses
-                console.error("Error fetching categories:", res.data.message);
-            }
-        })
-    },[])
+// Initial values for Formik form
+const initialValues = {
+  title: "",
+  description: "",
+  parent_id: "",
+  is_active: false,
+  show_in_menu: false,
+  image: null,
+};
+
+export default function AddCategory({ setForceReRender }) {
+  const [parents, setParents] = useState([]); // To store list of parent categories
+  const params = useParams(); // Get URL parameters
+  console.log(params);
+
+  const [reInirialValues, setReinitialValues] = useState(null); // For resetting initial values if categoryId exists
+
+  // Fetch all categories to populate parent dropdown
+  useEffect(() => {
+    const userToken = JSON.parse(localStorage.getItem("loginToken"));
+    axios
+      .get("https://ecomadminapi.azhadev.ir/api/admin/categories", {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          setParents(res.data.data);
+        } else {
+          console.error("Error fetching categories:", res.data.message);
+        }
+      });
+  }, []);
+
+  // If categoryId exists in URL params, pre-fill parent_id in form
+  useEffect(() => {
+    if (params.categoryId) {
+      setReinitialValues({
+        ...initialValues,
+        parent_id: params.categoryId,
+      });
+    } else {
+      setReinitialValues(null);
+    }
+  }, [params.categoryId]);
+
   return (
     <ModalsConatainer
       fullScreen={true}
       id={"add_product_category_modal"}
       title={"افزودن دسته بندی جدید"}
     >
+      {/* Formik Form */}
       <Formik
-        initialValues={{
-          title: "",
-          description: "",
-          parent_id: "",
-          is_active: false,
-          show_in_menu: false,
-          image: null,
-        }}
+        initialValues={reInirialValues || initialValues}
         validationSchema={categorySchema}
+        enableReinitialize // Allows form values to reset when initialValues change
         onSubmit={(values, { setSubmitting, resetForm }) => {
-        const userToken = JSON.parse(localStorage.getItem("loginToken"));
+          const userToken = JSON.parse(localStorage.getItem("loginToken"));
 
-        let submitPromise;
+          let submitPromise;
 
-        if (values.image) {
+          // If image exists, submit as FormData
+          if (values.image) {
             const formData = new FormData();
             formData.append("title", values.title);
             formData.append("description", values.description || "");
@@ -54,97 +81,95 @@ export default function AddCategory({setForceReRender}) {
             formData.append("image", values.image);
 
             submitPromise = axios.post(
-            "https://ecomadminapi.azhadev.ir/api/admin/categories",
-            formData,
-            {
+              "https://ecomadminapi.azhadev.ir/api/admin/categories",
+              formData,
+              {
                 headers: {
-                Authorization: `Bearer ${userToken}`,
-                "Content-Type": "multipart/form-data",
+                  Authorization: `Bearer ${userToken}`,
+                  "Content-Type": "multipart/form-data",
                 },
-            }
+              }
             );
-        } else {
+          } else {
+            // Otherwise, submit as JSON
             submitPromise = axios.post(
-            "https://ecomadminapi.azhadev.ir/api/admin/categories",
-            {
+              "https://ecomadminapi.azhadev.ir/api/admin/categories",
+              {
                 title: values.title,
                 description: values.description || "",
                 parent_id: values.parent_id || "",
                 is_active: values.is_active ? 1 : 0,
                 show_in_menu: values.show_in_menu ? 1 : 0,
-            },
-            {
+              },
+              {
                 headers: {
-                Authorization: `Bearer ${userToken}`,
+                  Authorization: `Bearer ${userToken}`,
                 },
-            }
+              }
             );
-        }
+          }
 
-        submitPromise
+          // Handle API response
+          submitPromise
             .then((res) => {
-            if (res.status >= 200 && res.status < 300) {
+              if (res.status >= 200 && res.status < 300) {
                 Swal.fire({
-                title: "موفق",
-                text: "دسته بندی با موفقیت اضافه شد",
-                icon: "success",
-                confirmButtonText: "باشه",
+                  title: "موفق",
+                  text: "دسته بندی با موفقیت اضافه شد",
+                  icon: "success",
+                  confirmButtonText: "باشه",
                 });
-                resetForm();
-                setForceReRender(prev=>prev+1); // افزایش مقدار برای رفرش داده‌ها
-            } else {
+                resetForm(); // Reset form after successful submission
+                setForceReRender((prev) => prev + 1); // Trigger re-render to refresh data
+              } else {
                 Swal.fire({
-                title: "خطا",
-                text: res.data?.message || "مشکلی پیش آمده است",
-                icon: "error",
-                confirmButtonText: "باشه",
+                  title: "خطا",
+                  text: res.data?.message || "مشکلی پیش آمده است",
+                  icon: "error",
+                  confirmButtonText: "باشه",
                 });
-            }
+              }
             })
             .catch((err) => {
-            Swal.fire({
+              Swal.fire({
                 title: "خطا",
                 text:
-                err.response?.data?.message ||
-                "مشکلی در ارتباط با سرور رخ داده است.",
+                  err.response?.data?.message ||
+                  "مشکلی در ارتباط با سرور رخ داده است.",
                 icon: "error",
                 confirmButtonText: "باشه",
-            });
+              });
             })
             .finally(() => {
-            setSubmitting(false);
+              setSubmitting(false); // Re-enable submit button
             });
         }}
       >
+        {/* Form body */}
         {({ setFieldValue, values, isSubmitting }) => (
           <Form>
             <div className="container">
               <div className="row justify-content-center">
-                {/* Parent Category */}
-                {parents.length>0?(                
-                <div className="col-12 col-md-6 col-lg-8">
-                  <div className="input-group mb-3 ltr-direction">
-                    <Field
-                      as="select"
-                      name="parent_id"
-                      className="form-control"
-                    >
-                      <option value="">بدون والد</option>
+                {/* Parent Category Dropdown */}
+                {parents.length > 0 ? (
+                  <div className="col-12 col-md-6 col-lg-8">
+                    <div className="input-group mb-3 ltr-direction">
+                      <Field as="select" name="parent_id" className="form-control">
+                        <option value="">بدون والد</option>
                         {parents.map((parent) => (
-                            <option key={parent.id} value={parent.id}>
-                                {parent.title}
-                            </option>
-                            ))}
-
-                    </Field>
-                    <span className="input-group-text w_6rem justify-content-center">
-                      دسته والد
-                    </span>
+                          <option key={parent.id} value={parent.id}>
+                            {parent.title}
+                          </option>
+                        ))}
+                      </Field>
+                      <span className="input-group-text w_6rem justify-content-center">
+                        دسته والد
+                      </span>
+                    </div>
                   </div>
-                </div>
-            ):null}
+                ) : null}
 
-                {/* Title */}
+                {/* Title Field */}
                 <div className="col-12 col-md-6 col-lg-8">
                   <div className="input-group mb-3 ltr-direction">
                     <Field
@@ -164,7 +189,7 @@ export default function AddCategory({setForceReRender}) {
                   />
                 </div>
 
-                {/* Description */}
+                {/* Description Field */}
                 <div className="col-12 col-md-6 col-lg-8">
                   <div className="input-group mb-3 ltr-direction">
                     <Field
@@ -207,7 +232,7 @@ export default function AddCategory({setForceReRender}) {
                   />
                 </div>
 
-                {/* is_active switch */}
+                {/* is_active Switch */}
                 <div className="col-12 col-md-6 col-lg-8 row justify-content-center">
                   <div className="form-check form-switch col-5 col-md-2">
                     <Field
@@ -225,7 +250,7 @@ export default function AddCategory({setForceReRender}) {
                   </div>
                 </div>
 
-                {/* show_in_menu switch */}
+                {/* show_in_menu Switch */}
                 <div className="col-12 col-md-6 col-lg-8 row justify-content-center mt-3">
                   <div className="form-check form-switch col-5 col-md-2">
                     <Field

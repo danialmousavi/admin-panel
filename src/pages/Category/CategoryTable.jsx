@@ -60,6 +60,7 @@ useEffect(() => {
   fetchData();
 }, [id,forceReRender]);
 
+
   const dataInfo = [
     { feild: "id", title: "#" },
     { feild: "title", title: "عنوان محصول" },
@@ -87,7 +88,7 @@ useEffect(() => {
     title: "جستجو",
     placeholder: "قسمتی از عنوان را وارد کنید",
     searchFeild: "title",
-    itemsPerPage: 5,
+    itemsPerPage: 3,
     id: "add_product_category_modal",
   };
 return (
@@ -104,7 +105,7 @@ return (
     ) : (
         <>
         {datas.length?(
-                <PaginatedTable
+      <PaginatedTable
         datas={datas}
         dataInfo={dataInfo}
         additionalFeild={additionalFeild}
