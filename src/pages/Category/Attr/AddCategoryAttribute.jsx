@@ -35,6 +35,7 @@ export default function AddCategoryAttribute() {
           rowData={rowData}
           setAttrToEdit={setAttrToEdit}
           attrToEdit={attrToEdit}
+          handleDeleteAttr={handleDeleteAttr}
         />
       ),
     },
@@ -96,6 +97,47 @@ export default function AddCategoryAttribute() {
     }
   },[attrToEdit])
 
+
+  //delete attribute record
+  const handleDeleteAttr=(rowData)=>{
+    const userToken=JSON.parse(localStorage.getItem("loginToken"))
+    Swal.fire({
+      title:"حذف ویژگی",
+      text:"آیا از حذف ویژگی اطمینان دارید؟",
+      icon:"question",
+      showCancelButton:true,
+      showConfirmButton:true,
+      cancelButtonText:"خیر",
+      confirmButtonText:"بله",
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',        
+    }).then(res=>{
+      if(res.isConfirmed){
+        console.log(rowData);
+        axios.delete(`https://ecomadminapi.azhadev.ir/api/admin/categories/attributes/${rowData.id}`,{
+          headers:{
+            "Authorization":`Bearer ${userToken}`
+          }
+        }).then(res=>{
+          console.log(res);
+          if(res.status==200){
+            Swal.fire({
+              title:"تبریک",
+              text:"با موفقیت حذف شد",
+              icon:"success"
+            })
+            setDatas(prevdata=>prevdata.filter(data=>data.id!==rowData.id))
+          }else{
+              Swal.fire({
+              title:"متاسفیم ",
+              text:"خطایی پیش آمده است",
+              icon:"error"
+            })
+          }
+        })
+      }
+    })
+  }
   return (
     <>
       <h4 className="text-center my-3">
@@ -110,7 +152,7 @@ export default function AddCategoryAttribute() {
           initialValues={reInitialValues||{ title: "", unit: "", in_filter: false }}
           validationSchema={attrVlidationSchema}
           enableReinitialize
-          onSubmit={(values) => {
+          onSubmit={(values,actions) => {
             // console.log(values);
             const userToken = JSON.parse(localStorage.getItem("loginToken"));
               if(!attrToEdit){ 
@@ -131,6 +173,8 @@ export default function AddCategoryAttribute() {
                   icon:"success"
                 })
                 setDatas(prev=>[...prev,res.data.data])
+                actions.resetForm();
+                
               }else{
                   Swal.fire({
                   title:"متاسفیم",
@@ -172,7 +216,7 @@ export default function AddCategoryAttribute() {
                         return item;
                       });
                     });
-
+                    actions.resetForm();
                     setAttrToEdit(null);
                   } else {
                     Swal.fire({

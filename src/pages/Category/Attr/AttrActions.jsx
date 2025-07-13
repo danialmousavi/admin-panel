@@ -1,5 +1,5 @@
 
-export default function AttrActions({ rowData ,attrToEdit,setAttrToEdit}) {
+export default function AttrActions({ rowData ,attrToEdit,setAttrToEdit,handleDeleteAttr}) {
   return (
     <>
     <div className={`${attrToEdit&&attrToEdit.id==rowData.id?"bg-select":""} d-flex justify-content-center`}>
@@ -12,6 +12,7 @@ export default function AttrActions({ rowData ,attrToEdit,setAttrToEdit}) {
       <i
         className="fas fa-times text-danger mx-1 hoverable_text pointer has_tooltip"
         title="حذف دسته"
+        onClick={()=>handleDeleteAttr(rowData)}
       ></i>
     </div>
     </>
