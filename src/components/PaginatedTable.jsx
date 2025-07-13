@@ -26,10 +26,14 @@ export default function PaginatedTable({datas, dataInfo,additionalFeild,searchpa
 
     // فیلتر کردن داده‌ها بر اساس ورودی جستجو
     useEffect(()=>{
+        console.log(searchInput);
+        
         if(searchInput.trim()==""){
             setInitialData(datas);
         }else{
-            const filterdData=datas.filter(item=>item.title.includes(searchInput));
+           const filterdData = datas.filter(item => 
+            item[searchparams.searchFeild]?.toString().includes(searchInput)
+            );
             
             setInitialData(filterdData)
             setCurrentPage(1); // بازنشانی صفحه به 1
