@@ -379,3 +379,7 @@ td , th {
 .disable{
     pointer-events: none !important;
 }
+.bg-select{
+    background-color: rgba(249, 84, 84, 0.342) !important;
+
+}
