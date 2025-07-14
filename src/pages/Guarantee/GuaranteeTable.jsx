@@ -8,10 +8,9 @@ import axios from 'axios';
 export default function GuaranteeTable() {
     const [loading, setLoading] = useState(false);
     const [datas,setDatas]=useState([]);
-  
-    const [brandsToEdit,setBrandsToEdit]=useState(null);
-  
-  const dataInfo = [
+    const [guaranteetoEdit,setGuaranteetoEdit]=useState(null);
+ 
+    const dataInfo = [
       { feild: "id", title: "#" },
       { feild: "title", title: "عنوان" },
       { feild: "descriptions", title: "توضیحات" },
@@ -24,7 +23,7 @@ export default function GuaranteeTable() {
     const additionalFeild = [
       {
         title: "عملیات",
-        elements: (rowData) => <Actions rowData={rowData} />,
+        elements: (rowData) => <Actions rowData={rowData} setGuaranteetoEdit={setGuaranteetoEdit} />,
       },
     ];
   
@@ -75,12 +74,14 @@ export default function GuaranteeTable() {
                 dataInfo={dataInfo}
                 additionalFeild={additionalFeild}
                 searchparams={searchparams}
+
               >
-                <AddGuarantee setDatas={setDatas} />
+                <AddGuarantee setDatas={setDatas} setGuaranteetoEdit={setGuaranteetoEdit} guaranteetoEdit={guaranteetoEdit} />
                 <button
                   className="btn btn-success d-flex justify-content-center align-items-center"
                   data-bs-toggle="modal"
                   data-bs-target={`#${searchparams.id}`}
+                  onClick={()=>setGuaranteetoEdit(null)}
                 >
                   <i className="fas fa-plus text-light"></i>
                 </button>

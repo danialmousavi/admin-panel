@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ModalsConatainer from "../../components/ModalsContainer";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import Swal from "sweetalert2";
 
-export default function AddGuarantee({setDatas}) {
+export default function AddGuarantee({setDatas,guaranteetoEdit}) {
   // تعریف اسکیما
   const validationSchema = Yup.object().shape({
     title: Yup.string().required("عنوان گارانتی الزامی است."),
@@ -16,7 +16,20 @@ export default function AddGuarantee({setDatas}) {
       .required("مدت گارانتی الزامی است."),
     length_unit: Yup.string().required("واحد مدت الزامی است."),
   });
-
+  const [reInitialValues,setReInitialValues]=useState(null);
+  useEffect(()=>{
+    if(guaranteetoEdit){
+          setReInitialValues({
+            title: guaranteetoEdit.title ,
+            descriptions: guaranteetoEdit.descriptions,
+            length:guaranteetoEdit.length,
+            length_unit: guaranteetoEdit.length_unit ,
+            });
+    }
+    else{
+        setReInitialValues(null)
+    }
+  },[guaranteetoEdit])
   return (
     <>
       <ModalsConatainer
@@ -26,39 +39,76 @@ export default function AddGuarantee({setDatas}) {
       >
         <div className="container">
           <Formik
-            initialValues={{
+            initialValues={reInitialValues||{
               title: "",
               descriptions: "",
               length: "",
               length_unit: "",
             }}
+            enableReinitialize
             validationSchema={validationSchema}
-            onSubmit={(values, { setSubmitting, resetForm }) => {
-                const userToken=JSON.parse(localStorage.getItem("loginToken"))
-              console.log(values);
-                axios.post("https://ecomadminapi.azhadev.ir/api/admin/guarantees",values,{
-                    headers:{
-                        "Authorization":`Bearer ${userToken}`
+            onSubmit={async (values, { setSubmitting, resetForm }) => {
+              const userToken = JSON.parse(localStorage.getItem("loginToken"));
+              try {
+                let response;
+                if (guaranteetoEdit) {
+                  // حالت ویرایش (PUT)
+                  response = await axios.put(
+                    `https://ecomadminapi.azhadev.ir/api/admin/guarantees/${guaranteetoEdit.id}`,
+                    values,
+                    {
+                      headers: {
+                        Authorization: `Bearer ${userToken}`,
+                      },
                     }
-                }).then(res=>{
-                    console.log(res);
-                    setSubmitting(false);
+                  );
+
+                  if (response.status == 200||response.status==201) {
+                    setDatas((prev) =>
+                      prev.map((item) =>
+                        item.id === guaranteetoEdit.id ? response.data.data : item
+                      )
+                    );
+                    Swal.fire({
+                      title: "تبریک!",
+                      text: "گارانتی با موفقیت ویرایش شد.",
+                      icon: "success",
+                    });
                     resetForm();
-                    if(res.status==200||res.status==201){
-                    setDatas((prevDatas) => [...prevDatas, res.data.data]);
-                    Swal.fire({
-                        title:"تبریک ",
-                        text:"گارانتی با موفقیت اضافه شد",
-                        icon:"success"
-                    })
-                    }else{
-                    Swal.fire({
-                        title:"متاسفیم",
-                        text:"مشکلی پیش آمده است",
-                        icon:"error"
-                    })                        
+                  }
+
+                } else {
+                  // حالت افزودن (POST)
+                  response = await axios.post(
+                    "https://ecomadminapi.azhadev.ir/api/admin/guarantees",
+                    values,
+                    {
+                      headers: {
+                        Authorization: `Bearer ${userToken}`,
+                      },
                     }
-                })
+                  );
+
+                  if (response.status === 200 || response.status === 201) {
+                    setDatas((prev) => [...prev, response.data.data]);
+                    Swal.fire({
+                      title: "تبریک!",
+                      text: "گارانتی با موفقیت اضافه شد.",
+                      icon: "success",
+                    });
+                  }
+                }
+                resetForm();
+              } catch (error) {
+                console.error(error);
+                Swal.fire({
+                  title: "متاسفیم",
+                  text: "مشکلی پیش آمده است.",
+                  icon: "error",
+                });
+              } finally {
+                setSubmitting(false);
+              }
             }}
           >
             {({ isSubmitting }) => (

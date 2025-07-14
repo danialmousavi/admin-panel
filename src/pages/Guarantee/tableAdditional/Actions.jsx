@@ -1,5 +1,5 @@
 
-export default function Actions({ rowData }) {
+export default function Actions({ rowData ,setGuaranteetoEdit}) {
   return (
     <>
     <div className={`d-flex justify-content-center`}>
@@ -8,7 +8,9 @@ export default function Actions({ rowData }) {
         title="ویرایش دسته"
         data-bs-toggle="modal"
         data-bs-placement="top"
-        data-bs-target="#add_brand_modal"
+        data-bs-target="#add_guarantee_modal"
+        onClick={()=>setGuaranteetoEdit(rowData)}
+
       ></i>
 
       <i
