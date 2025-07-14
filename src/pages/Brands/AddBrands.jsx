@@ -1,11 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ModalsConatainer from "../../components/ModalsContainer";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import axios from "axios";
 import Swal from "sweetalert2";
 import BrandSchema from "../../configs/BrandsSchema";
 
-export default function AddBrands({setDatas}) {
+export default function AddBrands({setDatas,setBrandsToEdit,brandsToEdit}) {
+  // edit brands
+  const [reInitialValues,setReInitialValues]=useState();
+  useEffect(()=>{
+    if(brandsToEdit){
+      console.log(brandsToEdit);
+      setReInitialValues({
+        original_name:brandsToEdit.original_name,
+        persian_name:brandsToEdit.persian_name,
+        descriptions:brandsToEdit.descriptions,
+        logo:null
+      })
+    }else{
+      setReInitialValues(null)
+    }
+  },[brandsToEdit])
+
   return (
     <ModalsConatainer
       fullScreen={false}
@@ -14,16 +30,19 @@ export default function AddBrands({setDatas}) {
     >
       <div className="container">
         <Formik
-          initialValues={{
+          initialValues={reInitialValues||{
             original_name: "",
             persian_name: "",
             descriptions: "",
             logo: null,
           }}
+          enableReinitialize
           validationSchema={BrandSchema}
           onSubmit={async (values, { setSubmitting, resetForm }) => {
+            const isEdit = !!brandsToEdit;//علامت‌های !! یعنی تبدیل به مقدار Boolean.
+            const token = JSON.parse(localStorage.getItem("loginToken"));
+
             try {
-              const token = JSON.parse(localStorage.getItem("loginToken"));
               const formData = new FormData();
               formData.append("original_name", values.original_name);
               formData.append("persian_name", values.persian_name);
@@ -32,27 +51,39 @@ export default function AddBrands({setDatas}) {
                 formData.append("logo", values.logo);
               }
 
-              const res = await axios.post(
-                "https://ecomadminapi.azhadev.ir/api/admin/brands",
-                formData,
-                {
-                  headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "multipart/form-data",
-                  },
-                }
-              );
+              const url = isEdit
+                ? `https://ecomadminapi.azhadev.ir/api/admin/brands/${brandsToEdit.id}`
+                : "https://ecomadminapi.azhadev.ir/api/admin/brands";
+
+              const res = await axios.post(url, formData, {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  // "Content-Type": "multipart/form-data",
+                },
+              });
+
               console.log(res);
-              
-              if (res.status == 201) {
+
+              if (res.status==200) {
                 Swal.fire({
                   title: "موفق",
-                  text: "برند با موفقیت اضافه شد",
+                  text: isEdit
+                    ? "برند با موفقیت ویرایش شد"
+                    : "برند با موفقیت اضافه شد",
                   icon: "success",
                   confirmButtonText: "باشه",
                 });
+
+                if (isEdit) {
+                  setDatas((prevDatas) =>
+                    prevDatas.map((item) =>
+                      item.id === res.data.data.id ? res.data.data : item
+                    )
+                  );
+                } else {
+                  setDatas((prevDatas) => [...prevDatas, res.data.data]);
+                }
                 resetForm();
-                setDatas(prevDatas=>[...prevDatas,res.data.data])
               } else {
                 Swal.fire({
                   title: "خطا",
@@ -74,6 +105,7 @@ export default function AddBrands({setDatas}) {
               setSubmitting(false);
             }
           }}
+
         >
           {({ values, setFieldValue, isSubmitting, handleSubmit }) => (
             <Form onSubmit={handleSubmit}>
@@ -135,7 +167,9 @@ export default function AddBrands({setDatas}) {
                     className="text-danger"
                   />
                 </div>
-
+                {brandsToEdit&&brandsToEdit.logo?(<>
+                  <img src={`https://ecomadminapi.azhadev.ir/${brandsToEdit.logo}`} style={{width:"100px",height:"100px"}} alt="" />
+                </>):null}
                 <div className="col-12">
                   <div className="input-group mb-3 ltr-direction">
                     <input

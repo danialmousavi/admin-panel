@@ -9,6 +9,7 @@ export default function BrandsTable() {
   const [loading, setLoading] = useState(false);
   const [datas,setDatas]=useState([]);
   const apiPath="https://ecomadminapi.azhadev.ir"
+  const [brandsToEdit,setBrandsToEdit]=useState(null);
   const dataInfo = [
       { feild: "id", title: "#" },
       { feild: "original_name", title: "نام اصلی" },
@@ -24,7 +25,7 @@ export default function BrandsTable() {
       },
       {
         title: "عملیات",
-        elements: (rowData) => <Actions rowData={rowData} />,
+        elements: (rowData) => <Actions rowData={rowData} setBrandsToEdit={setBrandsToEdit}/>,
       },
     ];
   
@@ -51,7 +52,7 @@ export default function BrandsTable() {
         }
       )
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setLoading(false);
         setDatas(res.data.data);
       });
@@ -75,11 +76,12 @@ export default function BrandsTable() {
                 additionalFeild={additionalFeild}
                 searchparams={searchparams}
               >
-                <AddBrands setDatas={setDatas}/>
+                <AddBrands setDatas={setDatas} brandsToEdit={brandsToEdit} setBrandsToEdit={setBrandsToEdit}/>
                 <button
                   className="btn btn-success d-flex justify-content-center align-items-center"
                   data-bs-toggle="modal"
                   data-bs-target={`#${searchparams.id}`}
+                  onClick={()=>setBrandsToEdit(null)}
                 >
                   <i className="fas fa-plus text-light"></i>
                 </button>
