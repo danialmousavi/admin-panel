@@ -4,6 +4,7 @@ import PaginatedTable from "../../components/PaginatedTable";
 import Actions from "./tableAdditional/Actions";
 import axios from "axios";
 import AddBrands from './AddBrands'
+import Swal from "sweetalert2";
 
 export default function BrandsTable() {
   const [loading, setLoading] = useState(false);
@@ -25,7 +26,7 @@ export default function BrandsTable() {
       },
       {
         title: "عملیات",
-        elements: (rowData) => <Actions rowData={rowData} setBrandsToEdit={setBrandsToEdit}/>,
+        elements: (rowData) => <Actions rowData={rowData} setBrandsToEdit={setBrandsToEdit} handleDeleteBrand={handleDeleteBrand}/>,
       },
     ];
   
@@ -60,7 +61,48 @@ export default function BrandsTable() {
         };
        useEffect(()=>{
         fetchBrands()
-      },[])       
+      },[])    
+      
+      //delete brand
+      const handleDeleteBrand=(rowData)=>{
+    const userToken=JSON.parse(localStorage.getItem("loginToken"))
+    Swal.fire({
+      title:"حذف ویژگی",
+      text:"آیا از حذف برند اطمینان دارید؟",
+      icon:"question",
+      showCancelButton:true,
+      showConfirmButton:true,
+      cancelButtonText:"خیر",
+      confirmButtonText:"بله",
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',        
+    }).then(res=>{
+      if(res.isConfirmed){
+        console.log(rowData);
+        axios.delete(`https://ecomadminapi.azhadev.ir/api/admin/brands/${rowData.id}`,{
+          headers:{
+            "Authorization":`Bearer ${userToken}`
+          }
+        }).then(res=>{
+          console.log(res);
+          if(res.status==200){
+            Swal.fire({
+              title:"تبریک",
+              text:"با موفقیت حذف شد",
+              icon:"success"
+            })
+            setDatas(prevdata=>prevdata.filter(data=>data.id!==rowData.id))
+          }else{
+              Swal.fire({
+              title:"متاسفیم ",
+              text:"خطایی پیش آمده است",
+              icon:"error"
+            })
+          }
+        })
+      }
+    })
+      }
   return (
     <>
       {loading ? (

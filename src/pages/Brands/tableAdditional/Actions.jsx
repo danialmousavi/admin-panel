@@ -1,5 +1,5 @@
 
-export default function Actions({ rowData ,setBrandsToEdit}) {
+export default function Actions({ rowData ,setBrandsToEdit,handleDeleteBrand}) {
   return (
     <>
     <div className={`d-flex justify-content-center`}>
@@ -15,6 +15,7 @@ export default function Actions({ rowData ,setBrandsToEdit}) {
       <i
         className="fas fa-times text-danger mx-1 hoverable_text pointer has_tooltip"
         title="حذف دسته"
+        onClick={()=>handleDeleteBrand(rowData)}
       ></i>
     </div>
     </>
