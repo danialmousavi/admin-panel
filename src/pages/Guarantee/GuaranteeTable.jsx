@@ -4,6 +4,7 @@ import Loading from '../../components/Loading';
 import PaginatedTable from '../../components/PaginatedTable';
 import AddGuarantee from './AddGuarantee';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 export default function GuaranteeTable() {
     const [loading, setLoading] = useState(false);
@@ -23,7 +24,7 @@ export default function GuaranteeTable() {
     const additionalFeild = [
       {
         title: "عملیات",
-        elements: (rowData) => <Actions rowData={rowData} setGuaranteetoEdit={setGuaranteetoEdit} />,
+        elements: (rowData) => <Actions rowData={rowData} setGuaranteetoEdit={setGuaranteetoEdit} handleDeleteGaurantee={handleDeleteGaurantee}/>,
       },
     ];
   
@@ -36,8 +37,8 @@ export default function GuaranteeTable() {
       id: "add_guarantee_modal",
     };
 
-    // fetch btands 
-    const fetchBrands = async () => {
+    // fetch Gaurantee 
+    const fetchGaurantee = async () => {
     const userToken = JSON.parse(localStorage.getItem("loginToken"));
     setLoading(true)
     await axios
@@ -57,9 +58,48 @@ export default function GuaranteeTable() {
 
         };
        useEffect(()=>{
-        fetchBrands()
+        fetchGaurantee()
       },[])    
-      
+      //delete Gaurantee
+      const handleDeleteGaurantee=(rowData)=>{
+ const userToken=JSON.parse(localStorage.getItem("loginToken"))
+    Swal.fire({
+      title:"حذف گارانتی",
+      text:"آیا از حذف گارانتی اطمینان دارید؟",
+      icon:"question",
+      showCancelButton:true,
+      showConfirmButton:true,
+      cancelButtonText:"خیر",
+      confirmButtonText:"بله",
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',        
+    }).then(res=>{
+      if(res.isConfirmed){
+        console.log(rowData);
+        axios.delete(`https://ecomadminapi.azhadev.ir/api/admin/guarantees/${rowData.id}`,{
+          headers:{
+            "Authorization":`Bearer ${userToken}`
+          }
+        }).then(res=>{
+          console.log(res);
+          if(res.status==200){
+            Swal.fire({
+              title:"تبریک",
+              text:"با موفقیت حذف شد",
+              icon:"success"
+            })
+            setDatas(prevdata=>prevdata.filter(data=>data.id!==rowData.id))
+          }else{
+              Swal.fire({
+              title:"متاسفیم ",
+              text:"خطایی پیش آمده است",
+              icon:"error"
+            })
+          }
+        })
+      }
+    })
+      }
   return (
     <>
       {loading ? (

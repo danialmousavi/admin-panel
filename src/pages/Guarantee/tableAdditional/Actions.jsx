@@ -1,5 +1,5 @@
 
-export default function Actions({ rowData ,setGuaranteetoEdit}) {
+export default function Actions({ rowData ,setGuaranteetoEdit,handleDeleteGaurantee}) {
   return (
     <>
     <div className={`d-flex justify-content-center`}>
@@ -16,6 +16,7 @@ export default function Actions({ rowData ,setGuaranteetoEdit}) {
       <i
         className="fas fa-times text-danger mx-1 hoverable_text pointer has_tooltip"
         title="حذف دسته"
+        onClick={()=>handleDeleteGaurantee(rowData)}
       ></i>
     </div>
     </>
