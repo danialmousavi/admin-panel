@@ -1,60 +1,100 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import Actions from './tableAdditional/Actions';
+import Loading from '../../components/Loading';
+import PaginatedTable from '../../components/PaginatedTable';
+import AddGuarantee from './AddGuarantee';
+import axios from 'axios';
 
 export default function GuaranteeTable() {
+    const [loading, setLoading] = useState(false);
+    const [datas,setDatas]=useState([]);
+  
+    const [brandsToEdit,setBrandsToEdit]=useState(null);
+  
+  const dataInfo = [
+      { feild: "id", title: "#" },
+      { feild: "title", title: "عنوان" },
+      { feild: "descriptions", title: "توضیحات" },
+      { feild: "length", title: "مدت گارانتی" },
+      { feild: "length_unit", title: "واحد" },
+
+    ];
+  
+  
+    const additionalFeild = [
+      {
+        title: "عملیات",
+        elements: (rowData) => <Actions rowData={rowData} />,
+      },
+    ];
+  
+    //اطلاعات مربوط به صفحه بندی و سرچ
+    const searchparams = {
+      title: "جستجو",
+      placeholder: "قسمتی از عنوان را وارد کنید",
+      searchFeild: "title",
+      itemsPerPage: 3,
+      id: "add_guarantee_modal",
+    };
+
+    // fetch btands 
+    const fetchBrands = async () => {
+    const userToken = JSON.parse(localStorage.getItem("loginToken"));
+    setLoading(true)
+    await axios
+      .get(
+        `https://ecomadminapi.azhadev.ir/api/admin/guarantees `,
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        // console.log(res);
+        setLoading(false);
+        setDatas(res.data.data);
+      });
+
+        };
+       useEffect(()=>{
+        fetchBrands()
+      },[])    
+      
   return (
     <>
-            <div className="row justify-content-between">
-                <div className="col-10 col-md-6 col-lg-4">
-                    <div className="input-group mb-3 ltr-direction">
-                        <input type="text" className="form-control" placeholder="قسمتی از عنوان را وارد کنید"/>
-                        <span className="input-group-text" >جستجو</span>
-                    </div>
-                </div>
-                <div className="col-2 col-md-6 col-lg-4 d-flex flex-column align-items-end">
-                    <button className="btn btn-success d-flex justify-content-center align-items-center" data-bs-toggle="modal" data-bs-target="#add_guarantee_modal">
-                        <i className="fas fa-plus text-light"></i>
-                    </button>
-                </div>
-            </div>    
-                <table className="table table-responsive text-center table-hover table-bordered">
-                <thead className="table-secondary">
-                    <tr>
-                        <th>#</th>
-                        <th>عنوان گارانتی</th>
-                        <th>مدت گارانتی</th>
-                        <th>توضیحات</th>
-                        <th>عملیات</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>گارانتی 1</td>
-                        <td>12 ماه</td>
-                        <td> توضیحات اجمالی در مورد این گارانتی</td>
-                        <td>
-                            <i className="fas fa-times text-danger mx-1 hoverable_text pointer has_tooltip" title="حذف گارانتی" data-bs-toggle="tooltip" data-bs-placement="top"></i>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <nav aria-label="Page navigation example" className="d-flex justify-content-center">
-                <ul className="pagination dir_ltr">
-                    <li className="page-item">
-                    <a className="page-link" href="#" aria-label="Previous">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                    </li>
-                    <li className="page-item"><a className="page-link" href="#">1</a></li>
-                    <li className="page-item"><a className="page-link" href="#">2</a></li>
-                    <li className="page-item"><a className="page-link" href="#">3</a></li>
-                    <li className="page-item">
-                    <a className="page-link" href="#" aria-label="Next">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                    </li>
-                </ul>
-                </nav>
+      {loading ? (
+        <Loading />
+      ) : (
+        <>
+          {datas.length ? (
+            <>
+            
+              <PaginatedTable
+                datas={datas}
+                dataInfo={dataInfo}
+                additionalFeild={additionalFeild}
+                searchparams={searchparams}
+              >
+                <AddGuarantee setDatas={setDatas} />
+                <button
+                  className="btn btn-success d-flex justify-content-center align-items-center"
+                  data-bs-toggle="modal"
+                  data-bs-target={`#${searchparams.id}`}
+                >
+                  <i className="fas fa-plus text-light"></i>
+                </button>
+              </PaginatedTable>
+            </>
+          ) : (
+            <>
+              <h1 className="text-center text-danger">
+                اطلاعاتی در دسترس نیست!
+              </h1>
+            </>
+          )}
+        </>
+      )}
     </>
   )
 }

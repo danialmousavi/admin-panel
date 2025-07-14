@@ -9,7 +9,6 @@ export default function Guarantee() {
             <h4 className="text-center my-3">مدیریت گارانتی ها</h4>
 
             <GuaranteeTable/>
-            <AddGuarantee/>
         </div>
     </>
   )
