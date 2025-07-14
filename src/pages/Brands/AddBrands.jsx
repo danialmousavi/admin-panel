@@ -64,7 +64,7 @@ export default function AddBrands({setDatas,setBrandsToEdit,brandsToEdit}) {
 
               console.log(res);
 
-              if (res.status==200) {
+              if (res.status === 200 || res.status === 201) {
                 Swal.fire({
                   title: "موفق",
                   text: isEdit
