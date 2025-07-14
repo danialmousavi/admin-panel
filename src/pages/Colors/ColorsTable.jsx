@@ -1,108 +1,101 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import Loading from "../../components/Loading";
+import PaginatedTable from "../../components/PaginatedTable";
+import AddColors from "./AddColors";
+import { elements } from "chart.js";
+import Actions from "./TableAdditional/Actions";
+import axios from "axios";
 
 export default function ColorsTable() {
+   const [loading, setLoading] = useState(false);
+      const [datas,setDatas]=useState([]);
+      const [ColortoEdit,setColortoEdit]=useState(null);
+   
+      const dataInfo = [
+        { feild: "id", title: "#" },
+        { feild: "title", title: "عنوان" },
+        { feild: "code", title: "کد رنگ" },
+  
+      ];
+    
+    
+      const additionalFeild = [
+        {
+          title:"عملیات",
+          elements:(rowData)=><div className="w-100 h-100 d-block" style={{backgroundColor:rowData.code,color:rowData.code}}>...</div>
+        },
+        {
+          title: "عملیات",
+          elements: (rowData) => <Actions rowData={rowData} />,
+        },
+      ];
+    
+      //اطلاعات مربوط به صفحه بندی و سرچ
+      const searchparams = {
+        title: "جستجو",
+        placeholder: "قسمتی از عنوان را وارد کنید",
+        searchFeild: "title",
+        itemsPerPage: 6,
+        id: "add_color_modal",
+      };
+      // fetch colors 
+    const fetchColors = async () => {
+    const userToken = JSON.parse(localStorage.getItem("loginToken"));
+    setLoading(true)
+    await axios
+      .get(
+        `https://ecomadminapi.azhadev.ir/api/admin/colors `,
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        }
+      )
+      .then((res) => {
+        // console.log(res);
+        setLoading(false);
+        setDatas(res.data.data);
+      });
+
+        };
+       useEffect(()=>{
+        fetchColors()
+      },[])    
   return (
     <>
-    <div className="row justify-content-between">
-        <div className="col-10 col-md-6 col-lg-4">
-            <div className="input-group mb-3 ltr-direction" >
-                <input type="text" className="form-control" placeholder="قسمتی از عنوان را وارد کنید"/>
-                 <span className="input-group-text" >جستجو</span>
-            </div>
-                </div>
-        <div className="col-2 col-md-6 col-lg-4 d-flex flex-column align-items-end">
-         <button className="btn btn-success d-flex justify-content-center align-items-center" data-bs-toggle="modal" data-bs-target="#add_color_modal">
-         <i className="fas fa-plus text-light"></i>
-        </button>
-        </div>
-    </div>    
-      <table className="table table-responsive text-center table-hover table-bordered">
-        <thead className="table-secondary">
-          <tr>
-            <th>#</th>
-            <th>نام رنگ</th>
-            <th>کد رنگ</th>
-            <th>رنگ</th>
-            <th>عملیات</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td>مشکی</td>
-            <td>#000000</td>
-            <td className="p-2">
-              <div
-                className="w-100 h-100 d-block"
-                style={{ background: "#000", color: "#000" }}
+      {loading ? (
+        <Loading />
+      ) : (
+        <>
+          {datas.length ? (
+            <>
+            
+              <PaginatedTable
+                datas={datas}
+                dataInfo={dataInfo}
+                additionalFeild={additionalFeild}
+                searchparams={searchparams}
+
               >
-                ...
-              </div>
-            </td>
-            <td>
-              <i
-                className="fas fa-times text-danger mx-1 hoverable_text pointer has_tooltip"
-                title="حذف رنگ"
-                data-bs-toggle="tooltip"
-                data-bs-placement="top"
-              ></i>
-            </td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>قزمز</td>
-            <td className="dir_ltr">#f44336 </td>
-            <td className="p-2">
-              <div
-                className="w-100 h-100 d-block"
-                style={{ background: "#f44336", color: " #f44336" }}
-              >
-                ...
-              </div>
-            </td>
-            <td>
-              <i
-                className="fas fa-times text-danger mx-1 hoverable_text pointer has_tooltip"
-                title="حذف رنگ"
-                data-bs-toggle="tooltip"
-                data-bs-placement="top"
-              ></i>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <nav
-        aria-label="Page navigation example"
-        className="d-flex justify-content-center"
-      >
-        <ul className="pagination dir_ltr">
-          <li className="page-item">
-            <a className="page-link" href="#" aria-label="Previous">
-              <span aria-hidden="true">&raquo;</span>
-            </a>
-          </li>
-          <li className="page-item">
-            <a className="page-link" href="#">
-              1
-            </a>
-          </li>
-          <li className="page-item">
-            <a className="page-link" href="#">
-              2
-            </a>
-          </li>
-          <li className="page-item">
-            <a className="page-link" href="#">
-              3
-            </a>
-          </li>
-          <li className="page-item">
-            <a className="page-link" href="#" aria-label="Next">
-              <span aria-hidden="true">&laquo;</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
+                <AddColors setDatas={setDatas} />
+                <button
+                  className="btn btn-success d-flex justify-content-center align-items-center"
+                  data-bs-toggle="modal"
+                  data-bs-target={`#${searchparams.id}`}
+                >
+                  <i className="fas fa-plus text-light"></i>
+                </button>
+              </PaginatedTable>
+            </>
+          ) : (
+            <>
+              <h1 className="text-center text-danger">
+                اطلاعاتی در دسترس نیست!
+              </h1>
+            </>
+          )}
+        </>
+      )}
     </>
   );
 }
