@@ -5,6 +5,7 @@ import AddColors from "./AddColors";
 import { elements } from "chart.js";
 import Actions from "./TableAdditional/Actions";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 export default function ColorsTable() {
    const [loading, setLoading] = useState(false);
@@ -26,7 +27,7 @@ export default function ColorsTable() {
         },
         {
           title: "عملیات",
-          elements: (rowData) => <Actions rowData={rowData} />,
+          elements: (rowData) => <Actions rowData={rowData} setColortoEdit={setColortoEdit} handleDeleteColor={handleDeleteColor}/>,
         },
       ];
     
@@ -61,6 +62,47 @@ export default function ColorsTable() {
        useEffect(()=>{
         fetchColors()
       },[])    
+      //delete color
+      const handleDeleteColor=(rowData)=>{
+        const userToken = JSON.parse(localStorage.getItem("loginToken"));
+
+        console.log(rowData);
+        Swal.fire({
+          title:"حذف رنگ",
+          text:"آیا میخواهید رنگ را حذف کنید؟",
+          icon:"question",
+          showCancelButton:true,
+          showConfirmButton:true,
+          cancelButtonText:"خیر",
+          confirmButtonText:"بله",
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33', 
+          
+        }).then(res=>{
+          if(res.isConfirmed){
+            axios.delete(`https://ecomadminapi.azhadev.ir/api/admin/colors/${rowData.id}`,{
+              headers:{
+                "Authorization":`Bearer ${userToken}`
+              }
+            }).then(res=>{
+              if(res.status==200||res.status==201){
+                Swal.fire({
+                  title:"تبریک",
+                  text:"با موفقیت حذف شد",
+                  icon:"success"
+                })                
+                setDatas(prevData=>prevData.filter(d=>d.id!==rowData.id))
+              }else{
+                Swal.fire({
+                          title:"متاسفیم ",
+                          text:"خطایی پیش آمده است",
+                          icon:"error"
+                        })                
+              }
+            })
+          }
+        })
+      }
   return (
     <>
       {loading ? (
@@ -77,11 +119,12 @@ export default function ColorsTable() {
                 searchparams={searchparams}
 
               >
-                <AddColors setDatas={setDatas} />
+                <AddColors setDatas={setDatas}  ColortoEdit={ColortoEdit}/>
                 <button
                   className="btn btn-success d-flex justify-content-center align-items-center"
                   data-bs-toggle="modal"
                   data-bs-target={`#${searchparams.id}`}
+                  onClick={()=>setColortoEdit(null)}
                 >
                   <i className="fas fa-plus text-light"></i>
                 </button>

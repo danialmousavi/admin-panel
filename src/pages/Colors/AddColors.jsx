@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ModalsConatainer from "../../components/ModalsContainer";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import Swal from "sweetalert2";
 
-export default function AddColors({setDatas}) {
+export default function AddColors({setDatas,ColortoEdit}) {
+    const [reInitialValues,setReInitialValues]=useState(null)
   // اسکیما ولیدیشن
   const validationSchema = Yup.object().shape({
     title: Yup.string().required("نام رنگ الزامی است."),
@@ -13,7 +14,17 @@ export default function AddColors({setDatas}) {
       .matches(/^#([0-9a-fA-F]{3}){1,2}$/, "کد رنگ معتبر نیست.")
       .required("کد رنگ الزامی است."),
   });
-
+  useEffect(()=>{
+    console.log(ColortoEdit);
+    if(ColortoEdit){
+        setReInitialValues({
+            title:ColortoEdit.title,
+            code:ColortoEdit.code
+        })
+    }else{
+        setReInitialValues(null)
+    }
+  },[ColortoEdit])
   return (
     <ModalsConatainer
       fullScreen={false}
@@ -22,10 +33,11 @@ export default function AddColors({setDatas}) {
     >
       <div className="container">
         <Formik
-          initialValues={{
+          initialValues={reInitialValues||{
             title: "",
             code: "#563d7c",   // مقدار اولیه رنگ
           }}
+          enableReinitialize
           validationSchema={validationSchema}
           onSubmit={(values) => {
             const userToken=JSON.parse(localStorage.getItem("loginToken"))
