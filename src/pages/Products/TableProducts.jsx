@@ -4,13 +4,14 @@ import PaginatedDataTable from "../../components/PaginatedDataTable";
 import AddProducts from "./AddProducts";
 import axios from "axios";
 import Actions from "../Colors/TableAdditional/Actions";
+import Swal from "sweetalert2";
 
 const TableProduct = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchChar, setSearchChar] = useState("") 
   const [currentPage, setCurrentPage] = useState(1) // صفحه حال حاضر
-  const [countOnPage, setCountOnPage] = useState(3) // تعداد محصول در هر صفحه
+  const [countOnPage, setCountOnPage] = useState(1) // تعداد محصول در هر صفحه
   const [pageCount, setPageCount] = useState(0) // تعداد کل صفحات
 
   const dataInfo = [
@@ -26,7 +27,7 @@ const TableProduct = () => {
     {
       field: null,
       title: "عملیات",
-      elements: (rowData) => <Actions rowData={rowData}/>,
+      elements: (rowData) => <Actions rowData={rowData} handleDeleteProducts={handleDeleteProducts}/>,
     },
   ];
   const searchParams = {
@@ -63,6 +64,46 @@ const TableProduct = () => {
     handleGetProducts(currentPage, countOnPage, searchChar)
   },[currentPage])
 
+  //Delete product
+  const handleDeleteProducts=(productId)=>{
+    const userToken=JSON.parse(localStorage.getItem("loginToken"))
+    Swal.fire({
+          title:"حذف محصول",
+          text:"آیا میخواهید محصول را حذف کنید؟",
+          icon:"question",
+          showCancelButton:true,
+          showConfirmButton:true,
+          cancelButtonText:"خیر",
+          confirmButtonText:"بله",
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33', 
+    }).then(res=>{
+        if(res.isConfirmed){
+                axios.delete(`https://ecomadminapi.azhadev.ir/api/admin/products/${productId}`,{
+        headers:{
+            "Authorization":`Bearer ${userToken}`
+        }
+    }).then(res=>{
+        console.log(res);
+        if(res.status==200||res.status==201){
+            Swal.fire({
+                title:"حذف",
+                text:"حذف با موفقیت انجام شد",
+                icon:"success"
+            })
+        handleGetProducts(currentPage, countOnPage, searchChar)
+        }else{
+                Swal.fire({
+                title:"متاسفیم",
+                text:"مشکلی پیش آمده است!",
+                icon:"success"
+            })
+        }
+    })
+        }
+    })
+
+  }
   return (
     <PaginatedDataTable
     tableData={data}
