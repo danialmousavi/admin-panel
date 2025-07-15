@@ -42,7 +42,8 @@ export default function AddColors({setDatas,ColortoEdit}) {
           onSubmit={(values) => {
             const userToken=JSON.parse(localStorage.getItem("loginToken"))
             console.log(values);
-            axios.post("https://ecomadminapi.azhadev.ir/api/admin/colors",values,{
+            if(!ColortoEdit){
+              axios.post("https://ecomadminapi.azhadev.ir/api/admin/colors",values,{
                 headers:{
                     "Authorization":`Bearer ${userToken}`
                 }
@@ -65,6 +66,35 @@ export default function AddColors({setDatas,ColortoEdit}) {
 
                 }
             })
+            }else{
+            axios.put(`https://ecomadminapi.azhadev.ir/api/admin/colors/${ColortoEdit.id}`,values,{
+                headers:{
+                    "Authorization":`Bearer ${userToken}`
+                }
+            }).then(res=>{
+                console.log(res);
+                
+                if(res.status==200||res.status==201){
+                    Swal.fire({
+                        title:"عالیه",
+                        text:"رنگ با موفقیت آپدیت شد",
+                        icon:"success"
+                    })
+                    setDatas((prev) =>
+                    prev.map((item) =>
+                      item.id === ColortoEdit.id ? res.data.data : item
+                    )
+                  );
+                }else{
+                    Swal.fire({
+                        title:"متاسفیم",
+                        text:"مشکلی پیش آمده است",
+                        icon:"error"
+                    })
+
+                }
+            })
+            }
           }}
         >
           {({ values, setFieldValue, isSubmitting }) => (
