@@ -12,8 +12,9 @@ const TableProduct = () => {
   const [loading, setLoading] = useState(false);
   const [searchChar, setSearchChar] = useState("") 
   const [currentPage, setCurrentPage] = useState(1) // صفحه حال حاضر
-  const [countOnPage, setCountOnPage] = useState(5) // تعداد محصول در هر صفحه
+  const [countOnPage, setCountOnPage] = useState(8) // تعداد محصول در هر صفحه
   const [pageCount, setPageCount] = useState(0) // تعداد کل صفحات
+  const apiPath="https://ecomadminapi.azhadev.ir"
 
   const dataInfo = [
     { field: "id", title: "#" },
@@ -22,9 +23,16 @@ const TableProduct = () => {
       title: "گروه محصول",
       elements: (rowData) => rowData.categories[0].title,
     },
-    { field: "title", title: "عنوان" },
+    { field: "title", title: "عنوان" }, 
     { field: "price", title: "قیمت" },
     { field: "stock", title: "موجودی" },
+    { 
+      // field: "image", 
+      title: "عکس" ,
+      elements: (rowData) => rowData.image?<img src={apiPath+"/"+rowData.image} width={40} alt="" />:null,
+
+    },
+    
     {
       field: null,
       title: "عملیات",

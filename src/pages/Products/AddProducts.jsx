@@ -4,6 +4,8 @@ import { Formik } from 'formik';
 import axios from 'axios';
 import ProductsvalidationSchema from '../../configs/ProductsSchema';
 import PrevBtn from '../../components/PrevBtn';
+import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 
 export default function AddProducts() {
   const [loading, setLoading] = useState(false);
@@ -19,6 +21,7 @@ export default function AddProducts() {
   const [brands, setBrands] = useState([]);
   const [colors, setColors] = useState([]);
   const [guarantees, setGuarantees] = useState([]);
+  const navigate=useNavigate()
   const initialValues = {
     category_ids: "",
     title: "",
@@ -196,8 +199,50 @@ const handleRemoveGuarantee = (guarantee, setFieldValue) => {
     <Formik
       initialValues={initialValues}
       validationSchema={ProductsvalidationSchema}
-      onSubmit={(values) => {
+      onSubmit={(values,Actions) => {
+        const userToken = JSON.parse(localStorage.getItem("loginToken"));
         console.log(values);
+        const formData= new FormData();
+        formData.append("category_ids",values.category_ids)
+        formData.append("title",values.title)
+        formData.append("price",values.price)
+        formData.append("weight",values.weight)
+        formData.append("brand_id",values.brand_id)
+        formData.append("color_ids",values.color_ids)
+        formData.append("guarantee_ids",values.guarantee_ids)
+        formData.append("descriptions",values.descriptions)
+        formData.append("short_descriptions",values.short_descriptions)
+        formData.append("cart_descriptions",values.cart_descriptions)
+        formData.append("image",values.image)
+        formData.append("alt_image",values.alt_image)
+        formData.append("keywords",values.keywords)
+        formData.append("stock",values.stock)
+        formData.append("discount",values.discount)
+      axios.post("https://ecomadminapi.azhadev.ir/api/admin/products",formData,{
+        headers:{
+          "Authorization":`Bearer ${userToken}`
+        }
+      }).then(Res=>{
+        console.log(Res);
+        if(Res.status==201){
+          Swal.fire({
+            title:"تبریک",
+            text:"محصول با موفقیت اضافه شد",
+            icon:"success"
+          }).then(()=>{
+            navigate(-1)
+          })
+          Actions.resetForm();
+        }else{
+            Swal.fire({
+            title:"متاسفیم ",
+            text:"مشکلی پیش آمده است",
+            icon:"error"
+          })
+        }
+      }
+      )
+
       }}
     >
       {({
