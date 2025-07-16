@@ -5,6 +5,7 @@ import AddProducts from "./AddProducts";
 import axios from "axios";
 import Actions from "../Colors/TableAdditional/Actions";
 import Swal from "sweetalert2";
+import { Link } from "react-router-dom";
 
 const TableProduct = () => {
   const [data, setData] = useState([]);
@@ -115,7 +116,9 @@ const TableProduct = () => {
     pageCount={pageCount}
     handleSearch={handleSearch}
     >
-      <AddProducts/>
+    <Link to={`/products/add`} className="btn btn-success d-flex justify-content-center align-items-center">
+        <i className="fas fa-plus text-light"></i>
+    </Link>
     </PaginatedDataTable>
   );
 };
