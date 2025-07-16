@@ -12,6 +12,13 @@ export default function AddProducts() {
   const [subCategories, setSubCategories] = useState([]);
   const [selectedCategory,setSelectedCategory]=useState([])
 
+  const [selectedBrands, setSelectedBrands] = useState([]);
+  const [selectedColors, setSelectedColors] = useState([]);
+  const [selectedGuarantees, setSelectedGuarantees] = useState([]);
+  
+  const [brands, setBrands] = useState([]);
+  const [colors, setColors] = useState([]);
+  const [guarantees, setGuarantees] = useState([]);
   const initialValues = {
     category_ids: "",
     title: "",
@@ -47,11 +54,61 @@ export default function AddProducts() {
     });
     setLoading(false);
   };
+  const fetchBrands = async () => {
+  const userToken = JSON.parse(localStorage.getItem("loginToken"));
+  try {
+    const res = await axios.get(
+      "https://ecomadminapi.azhadev.ir/api/admin/brands",
+      {
+        headers: { Authorization: `Bearer ${userToken}` },
+      }
+    );
+    setBrands(res.data.data);
+  } catch (error) {
+    console.log("Error fetching brands:", error);
+  }
+};
+
+const fetchColors = async () => {
+  const userToken = JSON.parse(localStorage.getItem("loginToken"));
+  try {
+    const res = await axios.get(
+      "https://ecomadminapi.azhadev.ir/api/admin/colors",
+      {
+        headers: { Authorization: `Bearer ${userToken}` },
+      }
+    );
+    setColors(res.data.data);
+  } catch (error) {
+    console.log("Error fetching colors:", error);
+  }
+};
+
+const fetchGuarantees = async () => {
+  const userToken = JSON.parse(localStorage.getItem("loginToken"));
+  try {
+    const res = await axios.get(
+      "https://ecomadminapi.azhadev.ir/api/admin/guarantees",
+      {
+        headers: { Authorization: `Bearer ${userToken}` },
+      }
+    );
+    setGuarantees(res.data.data);
+  } catch (error) {
+    console.log("Error fetching guarantees:", error);
+  }
+};
+
 // Run fetchData whenever catId changes
   useEffect(() => {
     fetchData();
   }, [catId]);
 
+  useEffect(() => {
+  fetchBrands();
+  fetchColors();
+  fetchGuarantees();
+}, []);
   //chnage subcategeory and save it in state 
   const handleSubcategoryChange=(value,setFieldValue)=>{
     setSelectedCategory(oldData=>{
@@ -74,6 +131,67 @@ export default function AddProducts() {
     });
 
   }
+
+
+  const handleBrandChange = (value, setFieldValue) => {
+  setSelectedBrands((oldData) => {
+    if (value && oldData.findIndex((d) => d === value) === -1) {
+      const newData = [...oldData, value];
+      setFieldValue("brand_id", newData.join("-"));
+      return newData;
+    } else {
+      return oldData;
+    }
+  });
+};
+
+const handleColorChange = (value, setFieldValue) => {
+  setSelectedColors((oldData) => {
+    if (value && oldData.findIndex((d) => d === value) === -1) {
+      const newData = [...oldData, value];
+      setFieldValue("color_ids", newData.join("-"));
+      return newData;
+    } else {
+      return oldData;
+    }
+  });
+};
+
+const handleRemoveColor = (color, setFieldValue) => {
+  setSelectedColors((oldData) => {
+    const newData = oldData.filter((d) => d !== color);
+    setFieldValue("color_ids", newData.join("-"));
+    return newData;
+  });
+};
+
+const handleRemoveBrand = (brand, setFieldValue) => {
+  setSelectedBrands((oldData) => {
+    const newData = oldData.filter((d) => d !== brand);
+    setFieldValue("brand_id", newData.join("-"));
+    return newData;
+  });
+};
+const handleGuaranteeChange = (value, setFieldValue) => {
+  setSelectedGuarantees((oldData) => {
+    if (value && oldData.findIndex((d) => d === value) === -1) {
+      const newData = [...oldData, value];
+      setFieldValue("guarantee_ids", newData.join("-"));
+      return newData;
+    } else {
+      return oldData;
+    }
+  });
+};
+
+const handleRemoveGuarantee = (guarantee, setFieldValue) => {
+  setSelectedGuarantees((oldData) => {
+    const newData = oldData.filter((d) => d !== guarantee);
+    setFieldValue("guarantee_ids", newData.join("-"));
+    return newData;
+  });
+};
+
   return (
     <Formik
       initialValues={initialValues}
@@ -215,93 +333,125 @@ export default function AddProducts() {
 
               <div className="col-12 col-md-6 col-lg-8">
                 <div className="input-group mb-3" style={{ direction: "ltr" }}>
-                  <span className="input-group-text justify-content-center">
-                    <i className="fas fa-plus text-success hoverable_text pointer"></i>
-                  </span>
-                  <input
-                    type="text"
-                    name="brand_id"
-                    value={values.brand_id}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
+                  <select
                     className="form-control"
-                    placeholder="قسمتی از نام برند را وارد کنید"
-                    list="brandLists"
-                  />
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value) {
+                        handleBrandChange(value, setFieldValue);
+                        e.target.value = ""; // reset select
+                      }
+                    }}
+                  >
+                    <option value="">انتخاب برند</option>
+                    {brands.map((brand) => (
+                      <option key={brand.id} value={brand.id}>
+                        {brand.persian_name}
+                      </option>
+                    ))}
+                  </select>
                   <span className="input-group-text w_6rem justify-content-center">برند</span>
-                  <datalist id="brandLists">
-                    <option value="سامسونگ" />
-                    <option value="سونی" />
-                    <option value="اپل" />
-                  </datalist>
                 </div>
                 {errors.brand_id && touched.brand_id && (
                   <div className="text-danger">{errors.brand_id}</div>
                 )}
-              </div>
 
-              <div className="col-12 col-md-6 col-lg-8">
-                <div className="input-group mb-2" style={{ direction: "ltr" }}>
-                  <input
-                    type="text"
-                    name="color_ids"
-                    value={values.color_ids}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    className="form-control"
-                    placeholder="قسمتی از نام رنگ را وارد کنید"
-                    list="colorList"
-                  />
-                  <datalist id="colorList">
-                    <option value="مشکی" />
-                    <option value="سفید" />
-                    <option value="قرمز" />
-                  </datalist>
-                  <span className="input-group-text w_6rem justify-content-center">رنگ</span>
-                </div>
-                {errors.color_ids && touched.color_ids && (
-                  <div className="text-danger">{errors.color_ids}</div>
-                )}
-                <div className="col-12 col-md-6 col-lg-8 mb-3 d-flex">
-                  <span className="color_tag chips_elem d-flex justify-content-center align-items-center pb-2" style={{ background: "#000" }}>
-                    <i className="fas fa-times text-danger hoverable_text"></i>
-                  </span>
+                <div className="col-12 col-md-6 col-lg-8 mb-3 d-flex flex-wrap">
+                  {selectedBrands.map((brand) => (
+                    <span className="chips_elem me-2 mb-2" key={brand}>
+                      <i
+                        className="fas fa-times text-danger pointer ms-1"
+                        onClick={() => handleRemoveBrand(brand, setFieldValue)}
+                      ></i>
+                      {brand}
+                    </span>
+                  ))}
                 </div>
               </div>
 
+
               <div className="col-12 col-md-6 col-lg-8">
-                <div className="input-group mb-2" style={{ direction: "ltr" }}>
-                  <input
-                    type="text"
-                    name="guarantee_ids"
-                    value={values.guarantee_ids}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
+                <div className="input-group mb-3" style={{ direction: "ltr" }}>
+                  <select
                     className="form-control"
-                    placeholder="قسمتی از نام گارانتی را وارد کنید"
-                    list="guarantiList"
-                  />
-                  <datalist id="guarantiList">
-                    <option value="گارانتی فلان 1" />
-                    <option value="گارانتی فلان 2" />
-                    <option value="گارانتی فلان 3" />
-                  </datalist>
-                  <span className="input-group-text w_6rem justify-content-center">گارانتی</span>
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value) {
+                        handleColorChange(value, setFieldValue);
+                        e.target.value = "";
+                      }
+                    }}
+                  >
+                    <option value="">انتخاب رنگ</option>
+                    {colors.map((color) => (
+                      <option key={color.id} value={color.id}>
+                        {color.title}
+                      </option>
+                    ))}
+                  </select>
+
+                  <span className="input-group-text w_6rem justify-content-center">
+                    رنگ
+                  </span>
                 </div>
-                {errors.guarantee_ids && touched.guarantee_ids && (
-                  <div className="text-danger">{errors.guarantee_ids}</div>
+                {errors.color_id && touched.color_id && (
+                  <div className="text-danger">{errors.color_id}</div>
                 )}
-                <div className="col-12 col-md-6 col-lg-8 mb-3">
-                  <span className="chips_elem">
-                    <i className="fas fa-times text-danger"></i>
-                    گارانتی فلان
-                  </span>
-                  <span className="chips_elem">
-                    <i className="fas fa-times text-danger"></i>
-                    گارانتی فلان
-                  </span>
+
+                <div className="col-12 col-md-6 col-lg-8 mb-3 d-flex flex-wrap">
+                  {selectedColors.map((color) => (
+                    <span className="chips_elem me-2 mb-2" key={color}>
+                      <i
+                        className="fas fa-times text-danger pointer ms-1"
+                        onClick={() => handleRemoveColor(color, setFieldValue)}
+                      ></i>
+                      {color}
+                    </span>
+                  ))}
                 </div>
               </div>
+
+                <div className="col-12 col-md-6 col-lg-8">
+                  <div className="input-group mb-3" style={{ direction: "ltr" }}>
+                    <select
+                      className="form-control"
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (value) {
+                          handleGuaranteeChange(value, setFieldValue);
+                          e.target.value = "";
+                        }
+                      }}
+                    >
+                      <option value="">انتخاب گارانتی</option>
+                      {guarantees.map((guarantee) => (
+                        <option key={guarantee.id} value={guarantee.id}>
+                          {guarantee.title}
+                        </option>
+                      ))}
+                    </select>
+
+                    <span className="input-group-text w_6rem justify-content-center">
+                      گارانتی
+                    </span>
+                  </div>
+                  {errors.guarantee_id && touched.guarantee_id && (
+                    <div className="text-danger">{errors.guarantee_id}</div>
+                  )}
+
+                  <div className="col-12 col-md-6 col-lg-8 mb-3 d-flex flex-wrap">
+                    {selectedGuarantees.map((guarantee) => (
+                      <span className="chips_elem me-2 mb-2" key={guarantee}>
+                        <i
+                          className="fas fa-times text-danger pointer ms-1"
+                          onClick={() => handleRemoveGuarantee(guarantee, setFieldValue)}
+                        ></i>
+                        {guarantee}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
 
               <div className="col-12 col-md-6 col-lg-8">
                 <div className="input-group mb-3" style={{ direction: "ltr" }}>
@@ -320,7 +470,23 @@ export default function AddProducts() {
                   <div className="text-danger">{errors.descriptions}</div>
                 )}
               </div>
-
+              <div className="col-12 col-md-6 col-lg-8">
+                <div className="input-group mb-3" style={{ direction: "ltr" }}>
+                  <textarea
+                    name="short_descriptions"
+                    value={values.short_descriptions}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    className="form-control"
+                    placeholder="توضیحات کوتاه"
+                    rows="5"
+                  ></textarea>
+                  <span className="input-group-text w_6rem justify-content-center">توضیحات کوتاه</span>
+                </div>
+                {errors.short_descriptions && touched.short_descriptions && (
+                  <div className="text-danger">{errors.short_descriptions}</div>
+                )}
+              </div>
               <div className="col-12 col-md-6 col-lg-8">
                 <div className="input-group mb-3" style={{ direction: "ltr" }}>
                   <input

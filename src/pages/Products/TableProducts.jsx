@@ -12,7 +12,7 @@ const TableProduct = () => {
   const [loading, setLoading] = useState(false);
   const [searchChar, setSearchChar] = useState("") 
   const [currentPage, setCurrentPage] = useState(1) // صفحه حال حاضر
-  const [countOnPage, setCountOnPage] = useState(1) // تعداد محصول در هر صفحه
+  const [countOnPage, setCountOnPage] = useState(5) // تعداد محصول در هر صفحه
   const [pageCount, setPageCount] = useState(0) // تعداد کل صفحات
 
   const dataInfo = [

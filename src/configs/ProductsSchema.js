@@ -12,7 +12,7 @@ const ProductsvalidationSchema = Yup.object({
     ),
   price: Yup.number().required("لطفا این قسمت را پر کنید"),
   weight: Yup.number(),
-  brand_id: Yup.number(),
+  brand_id: Yup.string(),
   color_ids: Yup.string().matches(
     /^[0-9\s-]+$/,
     "فقط ازاعداد و خط تیره استفاده شود"
