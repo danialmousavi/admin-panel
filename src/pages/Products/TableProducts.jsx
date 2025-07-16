@@ -3,9 +3,9 @@ import { useEffect } from "react";
 import PaginatedDataTable from "../../components/PaginatedDataTable";
 import AddProducts from "./AddProducts";
 import axios from "axios";
-import Actions from "../Colors/TableAdditional/Actions";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
+import Actions from "./TableAddition/Actions";
 
 const TableProduct = () => {
   const [data, setData] = useState([]);
@@ -36,7 +36,7 @@ const TableProduct = () => {
     {
       field: null,
       title: "عملیات",
-      elements: (rowData) => <Actions rowData={rowData} handleDeleteProducts={handleDeleteProducts}/>,
+      elements: (rowData) => <Actions rowData={rowData} handleDeleteProducts={handleDeleteProducts} />,
     },
   ];
   const searchParams = {

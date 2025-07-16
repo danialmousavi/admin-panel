@@ -5,7 +5,7 @@ import axios from 'axios';
 import ProductsvalidationSchema from '../../configs/ProductsSchema';
 import PrevBtn from '../../components/PrevBtn';
 import Swal from 'sweetalert2';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function AddProducts() {
   const [loading, setLoading] = useState(false);
@@ -21,7 +21,35 @@ export default function AddProducts() {
   const [brands, setBrands] = useState([]);
   const [colors, setColors] = useState([]);
   const [guarantees, setGuarantees] = useState([]);
-  const navigate=useNavigate()
+  const navigate=useNavigate();
+
+  //use uselocation for getting data of product u want to edit
+  const location=useLocation();
+  const productToEdit=location.state?s.productToEdit;
+  console.log("productToEdit",productToEdit);
+  const [reInitialValue,setReInitialValue]=useState(null);
+useEffect(() => {
+  if (productToEdit) {
+    setReInitialValue({
+      ...productToEdit,
+      category_ids: productToEdit.categories.map(c => c.id).join("-"),
+      color_ids: productToEdit.colors.map(c => c.id).join("-"),
+      guarantee_ids: productToEdit.guarantees.map(g => g.id).join("-"),
+      brand_id: productToEdit.brands ? productToEdit.brands.map(b => b.id).join("-") : "",
+    });
+
+    setSelectedCategory(productToEdit.categories || []);
+    setSelectedBrands(productToEdit.brands ? productToEdit.brands.map(b => b.id) : []);
+    setSelectedColors(productToEdit.colors ? productToEdit.colors.map(c => c.id) : []);
+    setSelectedGuarantees(productToEdit.guarantees ? productToEdit.guarantees.map(g => g.id) : []);
+  } else {
+    setReInitialValue(initialValues); // مقداردهی با مقدار اولیه خالی
+    setSelectedCategory([]);
+    setSelectedBrands([]);
+    setSelectedColors([]);
+    setSelectedGuarantees([]);
+  }
+}, []);
   const initialValues = {
     category_ids: "",
     title: "",
@@ -197,8 +225,9 @@ const handleRemoveGuarantee = (guarantee, setFieldValue) => {
 
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={reInitialValue||initialValues}
       validationSchema={ProductsvalidationSchema}
+      enableReinitialize
       onSubmit={(values,Actions) => {
         const userToken = JSON.parse(localStorage.getItem("loginToken"));
         console.log(values);
