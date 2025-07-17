@@ -25,8 +25,7 @@ export default function AddProducts() {
 
   //use uselocation for getting data of product u want to edit
   const location=useLocation();
-  const productToEdit=location.state?s.productToEdit;
-  console.log("productToEdit",productToEdit);
+  const productToEdit=location.state?.productToEdit;
   const [reInitialValue,setReInitialValue]=useState(null);
 useEffect(() => {
   if (productToEdit) {
@@ -50,23 +49,6 @@ useEffect(() => {
     setSelectedGuarantees([]);
   }
 }, []);
-  const initialValues = {
-    category_ids: "",
-    title: "",
-    price: "",
-    weight: "",
-    brand_id: "",
-    color_ids: "",
-    guarantee_ids: "",
-    descriptions: "",
-    short_descriptions: "",
-    cart_descriptions: "",
-    image: null,
-    alt_image: "",
-    keywords: "",
-    stock: "",
-    discount: "",
-  };
 
 // Function to fetch data from the API (either main categories or subcategories)
   const fetchData = async () => {
@@ -223,56 +205,107 @@ const handleRemoveGuarantee = (guarantee, setFieldValue) => {
   });
 };
 
+const cleanProductData = (data) => ({
+  category_ids: data.category_ids || "",
+  title: data.title || "",
+  price: data.price || "",
+  weight: data.weight || "",
+  brand_id: data.brand_id || "",
+  color_ids: data.color_ids || "",
+  guarantee_ids: data.guarantee_ids || "",
+  descriptions: data.descriptions || "",
+  short_descriptions: data.short_descriptions || "",
+  cart_descriptions: data.cart_descriptions || "",
+  image: null, // چون نمی‌خوای عکس بفرستی
+  alt_image: data.alt_image || "",
+  keywords: data.keywords || "",
+  stock: data.stock || "",
+  discount: data.discount || ""
+});
+const initialValues = productToEdit ? cleanProductData(productToEdit) : {
+  category_ids: "",
+  title: "",
+  price: "",
+  weight: "",
+  brand_id: "",
+  color_ids: "",
+  guarantee_ids: "",
+  descriptions: "",
+  short_descriptions: "",
+  cart_descriptions: "",
+  image: null,
+  alt_image: "",
+  keywords: "",
+  stock: "",
+  discount: ""
+};
+
   return (
     <Formik
       initialValues={reInitialValue||initialValues}
       validationSchema={ProductsvalidationSchema}
+      
       enableReinitialize
-      onSubmit={(values,Actions) => {
+      onSubmit={(values, actions) => {
         const userToken = JSON.parse(localStorage.getItem("loginToken"));
-        console.log(values);
-        const formData= new FormData();
-        formData.append("category_ids",values.category_ids)
-        formData.append("title",values.title)
-        formData.append("price",values.price)
-        formData.append("weight",values.weight)
-        formData.append("brand_id",values.brand_id)
-        formData.append("color_ids",values.color_ids)
-        formData.append("guarantee_ids",values.guarantee_ids)
-        formData.append("descriptions",values.descriptions)
-        formData.append("short_descriptions",values.short_descriptions)
-        formData.append("cart_descriptions",values.cart_descriptions)
-        formData.append("image",values.image)
-        formData.append("alt_image",values.alt_image)
-        formData.append("keywords",values.keywords)
-        formData.append("stock",values.stock)
-        formData.append("discount",values.discount)
-      axios.post("https://ecomadminapi.azhadev.ir/api/admin/products",formData,{
-        headers:{
-          "Authorization":`Bearer ${userToken}`
-        }
-      }).then(Res=>{
-        console.log(Res);
-        if(Res.status==201){
-          Swal.fire({
-            title:"تبریک",
-            text:"محصول با موفقیت اضافه شد",
-            icon:"success"
-          }).then(()=>{
-            navigate(-1)
-          })
-          Actions.resetForm();
-        }else{
-            Swal.fire({
-            title:"متاسفیم ",
-            text:"مشکلی پیش آمده است",
-            icon:"error"
-          })
-        }
-      }
-      )
 
+        if (productToEdit) {
+          // فقط اطلاعات متنی بفرست – بدون FormData
+          axios.put(`https://ecomadminapi.azhadev.ir/api/admin/products/${productToEdit.id}`, values, {
+            headers: {
+              "Authorization": `Bearer ${userToken}`
+            }
+          }).then(res => {
+            Swal.fire({
+              title: "تبریک",
+              text: "محصول با موفقیت ویرایش شد",
+              icon: "success"
+            }).then(() => {
+              navigate(-1);
+            });
+          }).catch(err => {
+            Swal.fire({
+              title: "خطا",
+              text: "ویرایش انجام نشد",
+              icon: "error"
+            });
+          });
+        } else {
+          // ساخت محصول جدید – همراه با عکس
+          const formData = new FormData();
+          for (const key in values) {
+            if (key === "image") {
+              if (values[key]) {
+                formData.append("image", values[key]);
+              }
+            } else {
+              formData.append(key, values[key]);
+            }
+          }
+
+          axios.post("https://ecomadminapi.azhadev.ir/api/admin/products", formData, {
+            headers: {
+              "Authorization": `Bearer ${userToken}`
+            }
+          }).then(res => {
+            Swal.fire({
+              title: "تبریک",
+              text: "محصول با موفقیت اضافه شد",
+              icon: "success"
+            }).then(() => {
+              navigate(-1);
+            });
+            actions.resetForm();
+          }).catch(err => {
+            Swal.fire({
+              title: "خطا",
+              text: "ثبت محصول انجام نشد",
+              icon: "error"
+            });
+          });
+        }
       }}
+
     >
       {({
         values,
@@ -561,6 +594,7 @@ const handleRemoveGuarantee = (guarantee, setFieldValue) => {
                   <div className="text-danger">{errors.short_descriptions}</div>
                 )}
               </div>
+                {!productToEdit?(
               <div className="col-12 col-md-6 col-lg-8">
                 <div className="input-group mb-3" style={{ direction: "ltr" }}>
                   <input
@@ -577,6 +611,7 @@ const handleRemoveGuarantee = (guarantee, setFieldValue) => {
                 )}
               </div>
 
+                ):null}
               <div className="col-12 col-md-6 col-lg-8">
                 <div className="input-group mb-3" style={{ direction: "ltr" }}>
                   <input
