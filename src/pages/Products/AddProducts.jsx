@@ -6,6 +6,7 @@ import ProductsvalidationSchema from '../../configs/ProductsSchema';
 import PrevBtn from '../../components/PrevBtn';
 import Swal from 'sweetalert2';
 import { useLocation, useNavigate } from 'react-router-dom';
+import RichTextEditor from '../../components/Ckeditor';
 
 export default function AddProducts() {
   const [loading, setLoading] = useState(false);
@@ -319,7 +320,9 @@ const initialValues = productToEdit ? cleanProductData(productToEdit) : {
       }) => (
         <form onSubmit={handleSubmit}>
           <div className="container">
-            <h4 className='text-center'>افزودن محصول جدید</h4>
+            <h4 className='text-center'>{
+              productToEdit?"اصلاح محصول":"افزودن محصول جدید"
+              }</h4>
             <div className='text-start'>
               <PrevBtn/>
             </div>
@@ -561,8 +564,7 @@ const initialValues = productToEdit ? cleanProductData(productToEdit) : {
 
 
               <div className="col-12 col-md-6 col-lg-8">
-                <div className="input-group mb-3" style={{ direction: "ltr" }}>
-                  <textarea
+                  {/* <textarea
                     name="descriptions"
                     value={values.descriptions}
                     onChange={handleChange}
@@ -570,9 +572,11 @@ const initialValues = productToEdit ? cleanProductData(productToEdit) : {
                     className="form-control"
                     placeholder="توضیحات"
                     rows="5"
-                  ></textarea>
-                  <span className="input-group-text w_6rem justify-content-center">توضیحات</span>
-                </div>
+                  ></textarea> */}
+                  <RichTextEditor
+                   value={values.descriptions}
+                  onChange={(data) => setFieldValue("descriptions", data)}
+                  /> 
                 {errors.descriptions && touched.descriptions && (
                   <div className="text-danger">{errors.descriptions}</div>
                 )}

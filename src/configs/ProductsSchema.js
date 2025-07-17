@@ -24,11 +24,11 @@ const ProductsvalidationSchema = Yup.object({
     .nullable()
     .matches(/^[0-9\s-]*$/, "فقط از اعداد و خط تیره استفاده شود"),
   descriptions: Yup.string()
-    .nullable()
-    .matches(
-      /^[\u0600-\u06FF\sa-zA-Z0-9@!%-.$?&]*$/,
-      "فقط از حروف و اعداد استفاده شود"
-    ),
+    .nullable(),
+    // .matches(
+    //   /^[\u0600-\u06FF\sa-zA-Z0-9@!%-.$?&]*$/,
+    //   "فقط از حروف و اعداد استفاده شود"
+    // ),
   short_descriptions: Yup.string()
     .nullable()
     .matches(
