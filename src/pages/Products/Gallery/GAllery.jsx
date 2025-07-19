@@ -13,8 +13,8 @@ export default function GAllery() {
     const [error, setError] = useState(null)
     const [loading , setLoading] = useState(false)
     const apiPath="https://ecomadminapi.azhadev.ir"
-
-        const handleSelectImage = async (e)=>{
+//send image to server
+    const handleSelectImage = async (e)=>{
           const userToken=JSON.parse(localStorage.getItem("loginToken"));
         setError(null)
         setLoading(true)
@@ -48,6 +48,68 @@ export default function GAllery() {
         setLoading(false);
 
     }
+    //delete image
+    const handleDeleteImage=(imgId)=>{
+      console.log(imgId);
+       const userToken=JSON.parse(localStorage.getItem("loginToken"));
+      Swal.fire({
+          title:"حذف عکس",
+          text:"آیا میخواهید عکس را حذف کنید؟",
+          icon:"question",
+          showCancelButton:true,
+          showConfirmButton:true,
+          cancelButtonText:"خیر",
+          confirmButtonText:"بله",
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33', 
+      }).then(res=>{
+        if(res.isConfirmed){
+                axios.delete(`https://ecomadminapi.azhadev.ir/api/admin/products/gallery/${imgId}`,{
+        headers:{
+          "Authorization":`Bearer ${userToken}`
+
+        }
+      }).then(res=>{
+        console.log(res);
+        if(res.status==200){
+          setGallery(prev=>prev.filter(img=>img.id!==imgId))
+          Swal.fire({
+            title:"تبریک",
+            text:"عکس با موفقیت از گالری حذف شد",
+            icon:"success"
+          })
+        }
+      })
+        }
+      })
+
+    }
+    //update image and set it as default pic 
+    const handleSetMainImage=(imgId)=>{
+      const userToken=JSON.parse(localStorage.getItem("loginToken"));
+      console.log(imgId);
+      axios.get(`https://ecomadminapi.azhadev.ir/api/admin/products/gallery/set_main/${imgId}`,{
+        headers:{
+          "Authorization":`Bearer ${userToken}`
+          
+        }
+      }).then(res=>{
+        console.log(res);
+        if (res.status==200) {
+          Swal.fire({
+            title:"تبریک",
+            text:"عکس با موفقیت به عنوان عکس پیشفرض قرار گرفت",
+            icon:"success"
+          })
+          setGallery(old=>{
+            let newGallery=old.map(img=>{return {...img,is_main:0}})
+            const index=newGallery.findIndex(i=>i.id==imgId);
+            newGallery[index].is_main=1;
+            return newGallery;
+          })
+        }
+      })
+    }
   return (
 <div className="container">
   <h4 className="text-center my-3">
@@ -80,11 +142,13 @@ export default function GAllery() {
               <i
                 className="fas fa-clipboard-check text-success pointer hoverable_text mx-2 font_1_2"
                 title="انتخاب به عنوان اصلی"
+                onClick={()=>handleSetMainImage(g.id)}
               ></i>
             )}
             <i
               className="fas fa-trash-alt text-danger pointer hoverable_text mx-2 font_1_2"
               title="حذف این تصویر"
+              onClick={()=>handleDeleteImage(g.id)}
             ></i>
           </div>
         </div>
