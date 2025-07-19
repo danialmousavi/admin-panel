@@ -19,6 +19,7 @@ import Colors from "./Colors/Colors";
 import AddCategoryAttribute from "./Category/Attr/AddCategoryAttribute";
 import AddProducts from "./Products/AddProducts";
 import SetAttributes from "./Products/SetAttributes/SetAttributes";
+import GAllery from "./Products/Gallery/GAllery";
 export default function Content() {
   const admincontext = useContext(AdminContext);
   return (
@@ -33,7 +34,7 @@ export default function Content() {
             <Route path='/products' element={<Products/>}/>
             <Route path='/products/add' element={<AddProducts/>}/>
             <Route path='/products/set-attr' element={<SetAttributes/>}/>
-
+            <Route path='/products/gallery'element={<GAllery/>}/>
             <Route path='/category' element={<Category/>}>
               <Route path=':categoryId' element={<Category/>}/>
             </Route>
