@@ -14,8 +14,9 @@ const Actions = ({ rowData,handleDeleteProducts}) => {
       <i
         className="fas fa-receipt text-info mx-1 hoverable_text pointer has_tooltip"
         title="ثبت ویژگی"
-        data-bs-toggle="modal"
-        data-bs-target="#add_product_attr_modal"
+        onClick={()=>navigate("/products/set-attr",{
+          state:{selectedProduct:rowData}
+        })}
       ></i>
       <i
         className="fas fa-times text-danger mx-1 hoverable_text pointer has_tooltip"
