@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import React, { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import PrevBtn from '../../../components/PrevBtn';
 import Loading from '../../../components/Loading';
 import * as Yup from "yup"
@@ -15,6 +15,7 @@ export default function SetAttributes() {
     ;
     const [initialValues,setInitialValues]=useState(null);
     const [validationSchema,setValidationSchema]=useState({});
+    const navigate=useNavigate();
     const handleGetAttributes = async ()=>{
     const userToken = JSON.parse(localStorage.getItem("loginToken"));
     let attrsVar=[];
@@ -35,7 +36,8 @@ export default function SetAttributes() {
                     attrsVar=[...attrsVar,{groupTitle:cat.title,data:res.data.data}]
                     if (res.data.data.length > 0) {
                         for (const d of res.data.data) {                        
-                            initials = {...initials, [d.id]:""}
+                            const value=selectedProduct.attributes.filter(a=>a.id==d.id)[0]?.pivot.value||"";
+                            initials = {...initials, [d.id]:value}
                             rules = {...rules, [d.id]:Yup.string().matches(/^[\u0600-\u06FF\sa-zA-Z0-9@!%-.$?&]+$/, "فقط از حروف و اعداد استفاده شود")}
                         }
                     }
@@ -82,8 +84,11 @@ export default function SetAttributes() {
                     title:"تبریک",
                     text:"ویژگی محصول با موفقیت اضافه شد",
                     icon:"success"
+                }).then(()=>{
+                    navigate(-1)
                 })
                 actions.resetForm();
+                
             }
         })
 
