@@ -41,7 +41,7 @@ export default function DiscountsTable() {
     title: "جستجو",
     placeholder: "قسمتی از عنوان را وارد کنید",
     searchFeild: "title",
-    itemsPerPage: 3,
+    itemsPerPage: 10,
     id: "add_discount_modal",
   };
     const fetchData = async () => {
@@ -106,7 +106,7 @@ export default function DiscountsTable() {
             <Link to={`/discounts/add_discount`} className="btn btn-success d-flex justify-content-center align-items-center" >
                 <i className="fas fa-plus text-light"></i>
             </Link>
-            <Outlet/>
+            <Outlet context={{setDatas}}/>
           </PaginatedTable>
       </>
         ):(<>

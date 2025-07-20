@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import ModalsConatainer from '../../components/ModalsContainer'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useOutletContext } from 'react-router-dom'
 import axios from 'axios';
 import { Form, Formik, Field, ErrorMessage } from 'formik';
-import * as Yup from "yup";
+import moment from 'jalali-moment';
+import Swal from 'sweetalert2';
 
 export default function AddDiscounts() {
   const navigate = useNavigate();
   const [allProducts, setAllProducts] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [productInputValue, setProductInputValue] = useState("");
+  const {setDatas}=useOutletContext();
 
   const initialValues = {
     title: "",
@@ -96,10 +98,6 @@ const validateForm = (values) => {
     );
   };
 
-  const handleSubmit = (values) => {
-    console.log("Form values:", values);
-    // Submit logic here
-  };
 
   return (
     <ModalsConatainer
@@ -113,7 +111,47 @@ const validateForm = (values) => {
         <Formik
           initialValues={initialValues}
           validate={validateForm}
-          onSubmit={handleSubmit}
+onSubmit={async (values, actions) => {
+  const userToken = JSON.parse(localStorage.getItem("loginToken"));
+
+  const newValues = {
+    ...values,
+    expire_at: moment.from(values.expire_at, 'fa', 'YYYY/MM/DD').format('YYYY-MM-DD'),
+  };
+
+  try {
+    const res = await axios.post(
+      'https://ecomadminapi.azhadev.ir/api/admin/discounts',
+      newValues,
+      {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      }
+    );
+
+    if (res.status === 201) {
+      setDatas(prev => [...prev, res.data.data]);
+
+      Swal.fire({
+        title: "کد تخفیف با موفقیت ایجاد شد",
+        icon: "success",
+        confirmButtonText: "باشه",
+      });
+
+      navigate(-1);
+    }
+  } catch (error) {
+    console.error("خطا در ثبت تخفیف:", error);
+
+    Swal.fire({
+      title: "خطا!",
+      text: error.response?.data?.message || "مشکلی پیش آمده، لطفا دوباره تلاش کنید.",
+      icon: "error",
+      confirmButtonText: "فهمیدم",
+    });
+  }
+}}
         >
           {({ values, errors, touched, setFieldValue }) => (
             <Form>
