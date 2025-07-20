@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import ModalsConatainer from '../../components/ModalsContainer'
-import { useNavigate, useOutletContext } from 'react-router-dom'
+import { useLocation, useNavigate, useOutletContext } from 'react-router-dom'
 import axios from 'axios';
 import { Form, Formik, Field, ErrorMessage } from 'formik';
 import moment from 'jalali-moment';
@@ -12,7 +12,11 @@ export default function AddDiscounts() {
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [productInputValue, setProductInputValue] = useState("");
   const {setDatas}=useOutletContext();
-
+  const location=useLocation();
+  const discountToEdit=location.state?.discountToEdit;
+  console.log(discountToEdit);
+  
+  const [reInitialValues,setReInitialValues]=useState();
   const initialValues = {
     title: "",
     code: "",
@@ -98,7 +102,28 @@ const validateForm = (values) => {
     );
   };
 
+  //edit discount 
+useEffect(() => {
+  if (discountToEdit) {
+    const existingProducts = discountToEdit.products?.map(p => ({
+      id: p.id,
+      value: p.title
+    })) || [];
 
+    setSelectedProducts(existingProducts); // ← نمایش محصولات به صورت چیپس
+
+    setReInitialValues({
+      title: discountToEdit.title,
+      code: discountToEdit.code,
+      percent: discountToEdit.percent,
+      expire_at: moment(discountToEdit.expire_at, 'YYYY-MM-DD').locale('fa').format('YYYY/MM/DD'),
+      for_all: discountToEdit.for_all ? true : false,
+      product_ids: existingProducts.map(p => p.id).join('-'),
+    });
+  } else {
+    setReInitialValues(null);
+  }
+}, [discountToEdit]);
   return (
     <ModalsConatainer
       id={"add_discount_modal"}
@@ -109,49 +134,73 @@ const validateForm = (values) => {
     >
       <div className="container">
         <Formik
-          initialValues={initialValues}
+          initialValues={reInitialValues||initialValues}
           validate={validateForm}
-onSubmit={async (values, actions) => {
-  const userToken = JSON.parse(localStorage.getItem("loginToken"));
+          enableReinitialize
+          onSubmit={async (values, actions) => {
+            const userToken = JSON.parse(localStorage.getItem("loginToken"));
 
-  const newValues = {
-    ...values,
-    expire_at: moment.from(values.expire_at, 'fa', 'YYYY/MM/DD').format('YYYY-MM-DD'),
-  };
+            const newValues = {
+              ...values,
+              expire_at: moment.from(values.expire_at, 'fa', 'YYYY/MM/DD').format('YYYY-MM-DD'),
+            };
 
-  try {
-    const res = await axios.post(
-      'https://ecomadminapi.azhadev.ir/api/admin/discounts',
-      newValues,
-      {
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-      }
-    );
+            try {
+              let res;
 
-    if (res.status === 201) {
-      setDatas(prev => [...prev, res.data.data]);
+              if (discountToEdit) {
+                // ارسال درخواست ویرایش (PUT)
+                res = await axios.put(
+                  `https://ecomadminapi.azhadev.ir/api/admin/discounts/${discountToEdit.id}`,
+                  newValues,
+                  {
+                    headers: {
+                      Authorization: `Bearer ${userToken}`,
+                    },
+                  }
+                );
+              } else {
+                // ارسال درخواست ایجاد (POST)
+                res = await axios.post(
+                  'https://ecomadminapi.azhadev.ir/api/admin/discounts',
+                  newValues,
+                  {
+                    headers: {
+                      Authorization: `Bearer ${userToken}`,
+                    },
+                  }
+                );
+              }
 
-      Swal.fire({
-        title: "کد تخفیف با موفقیت ایجاد شد",
-        icon: "success",
-        confirmButtonText: "باشه",
-      });
+              if (res.status === 200 || res.status === 201) {
+                // اگر discount جدید است، اضافه کن، اگر ویرایش است، جایگزین کن
+                setDatas(prev => {
+                  if (discountToEdit) {
+                    return prev.map(item => item.id === discountToEdit.id ? res.data.data : item);
+                  } else {
+                    return [...prev, res.data.data];
+                  }
+                });
 
-      navigate(-1);
-    }
-  } catch (error) {
-    console.error("خطا در ثبت تخفیف:", error);
+                Swal.fire({
+                  title: discountToEdit ? "کد تخفیف با موفقیت ویرایش شد" : "کد تخفیف با موفقیت ایجاد شد",
+                  icon: "success",
+                  confirmButtonText: "باشه",
+                });
 
-    Swal.fire({
-      title: "خطا!",
-      text: error.response?.data?.message || "مشکلی پیش آمده، لطفا دوباره تلاش کنید.",
-      icon: "error",
-      confirmButtonText: "فهمیدم",
-    });
-  }
-}}
+                navigate(-1);
+              }
+            } catch (error) {
+              console.error("خطا:", error);
+              Swal.fire({
+                title: "خطا!",
+                text: error.response?.data?.message || "مشکلی پیش آمده، لطفا دوباره تلاش کنید.",
+                icon: "error",
+                confirmButtonText: "فهمیدم",
+              });
+            }
+          }}
+
         >
           {({ values, errors, touched, setFieldValue }) => (
             <Form>
