@@ -1,10 +1,12 @@
 import React from 'react'
 import ModalsConatainer from '../../components/ModalsContainer'
+import { useNavigate } from 'react-router-dom'
 
 export default function AddDiscounts() {
+  const navigate=useNavigate()
   return (
     <>
-        <ModalsConatainer id={"add_discount_modal"} title="افزودن تخفیف جدید" fullScreen={false}> 
+        <ModalsConatainer id={"add_discount_modal"} className="show d-block" closeFunction={()=>navigate(-1)} title="افزودن تخفیف جدید" fullScreen={false}> 
 
                   <div className="container">
                 <div className="row justify-content-center">

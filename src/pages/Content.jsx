@@ -20,6 +20,7 @@ import AddCategoryAttribute from "./Category/Attr/AddCategoryAttribute";
 import AddProducts from "./Products/AddProducts";
 import SetAttributes from "./Products/SetAttributes/SetAttributes";
 import GAllery from "./Products/Gallery/GAllery";
+import AddDiscounts from "./Discounts/AddDiscounts";
 export default function Content() {
   const admincontext = useContext(AdminContext);
   return (
@@ -43,7 +44,9 @@ export default function Content() {
             <Route path='/colors' element={<Colors/>}/>
             <Route path='/guarantee' element={<Guarantee/>}/>
             <Route path='/brands' element={<Brands/>}/>
-            <Route path='/discounts' element={<Discounts/>}/>
+            <Route path='/discounts' element={<Discounts/>}>
+              <Route path="add_discount" element={<AddDiscounts/>}/>
+            </Route>
             <Route path='/cart' element={<Cart/>}/>
             <Route path='/orders' element={<Orders/>}/>
             <Route path='/delivery' element={<Deliveries/>}/>
