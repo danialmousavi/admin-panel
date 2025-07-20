@@ -6,7 +6,7 @@ const ModalsConatainer = ({ children ,id,fullScreen,title,className,closeFunctio
       className={`modal fade ${className||""}`}
       id={id}
       tabIndex="-1"
-      aria-hidden="true"
+
     >
       <div className={`modal-dialog ${fullScreen ? "modal-fullscreen" : ""}`}>
         <div className="modal-content">
