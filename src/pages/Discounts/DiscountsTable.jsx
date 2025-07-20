@@ -34,7 +34,7 @@ export default function DiscountsTable() {
       },
         {
         title: "عملیات",
-        elements: (rowData) => <Actions rowData={rowData} />,
+        elements: (rowData) => <Actions rowData={rowData}  handleDeleteDiscount={handleDeleteDiscount}/>,
       },
     ];
       const searchparams = {
@@ -44,6 +44,7 @@ export default function DiscountsTable() {
     itemsPerPage: 10,
     id: "add_discount_modal",
   };
+  //get all discounts 
     const fetchData = async () => {
     setLoading(true); // شروع لودینگ
 
@@ -88,6 +89,55 @@ export default function DiscountsTable() {
   useEffect(()=>{
     fetchData()
   },[])
+
+  //delete discount
+const handleDeleteDiscount = async (discountId) => {
+  const userToken = JSON.parse(localStorage.getItem("loginToken"));
+
+  const result = await Swal.fire({
+    title: "حذف کد تخفیف",
+    text: "آیا از حذف کد تخفیف اطمینان دارید؟",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonText: "بله",
+    cancelButtonText: "خیر",
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+  });
+
+  if (!result.isConfirmed) return;
+
+  try {
+    const res = await axios.delete(
+      `https://ecomadminapi.azhadev.ir/api/admin/discounts/${discountId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      }
+    );
+
+    if (res.status === 200) {
+      setDatas((prev) => prev.filter((dis) => dis.id !== discountId));
+
+      Swal.fire({
+        title: "کد تخفیف با موفقیت حذف شد",
+        icon: "success",
+        confirmButtonText: "باشه",
+      });
+    }
+  } catch (error) {
+    console.error("خطا در حذف کد تخفیف:", error);
+
+    Swal.fire({
+      title: "خطا!",
+      text: error.response?.data?.message || "حذف کد تخفیف با مشکل مواجه شد.",
+      icon: "error",
+      confirmButtonText: "فهمیدم",
+    });
+  }
+};
+
   return (
     <>
     {loading ? (
