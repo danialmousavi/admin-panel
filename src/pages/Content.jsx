@@ -21,6 +21,7 @@ import AddProducts from "./Products/AddProducts";
 import SetAttributes from "./Products/SetAttributes/SetAttributes";
 import GAllery from "./Products/Gallery/GAllery";
 import AddDiscounts from "./Discounts/AddDiscounts";
+import AddRoles from "./Roles/AddRoles";
 export default function Content() {
   const admincontext = useContext(AdminContext);
   return (
@@ -51,7 +52,9 @@ export default function Content() {
             <Route path='/orders' element={<Orders/>}/>
             <Route path='/delivery' element={<Deliveries/>}/>
             <Route path='/users' element={<Users/>}/>
-            <Route path='/roles' element={<Roles/>}/>
+            <Route path='/roles' element={<Roles/>}>
+            <Route path="add-roles" element={<AddRoles/>}/>
+            </Route>
             <Route path='/permisions' element={<Permisions/>}/>
             <Route path='/questions' element={<Questions/>}/>
             <Route path='/comments' element={<Comments/>}/>

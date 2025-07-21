@@ -25,7 +25,7 @@ export default function PermisionsTable() {
         searchFeild: "title",
         itemsPerPage: 10,
       };
-        //get all discounts 
+        //get all permissions 
     const fetchData = async () => {
     setLoading(true); // شروع لودینگ
 
