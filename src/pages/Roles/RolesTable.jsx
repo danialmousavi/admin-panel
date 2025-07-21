@@ -18,7 +18,7 @@ export default function RolesTable() {
   const additionalFeild = [
     {
       title: "عملیات",
-      elements: (rowData) => <Actions rowData={rowData} />,
+      elements: (rowData) => <Actions rowData={rowData} handleDeleteRoles={handleDeleteRoles}/>,
     },
   ];
   const searchparams = {
@@ -73,7 +73,45 @@ export default function RolesTable() {
     fetchData()
   },[])
 
-  
+  const handleDeleteRoles=(rolesID)=>{
+    console.log(rolesID);
+      const userToken=JSON.parse(localStorage.getItem("loginToken"))
+    Swal.fire({
+      title:"حذف نقش",
+      text:"آیا از حذف نقش اطمینان دارید؟",
+      icon:"question",
+      showCancelButton:true,
+      showConfirmButton:true,
+      cancelButtonText:"خیر",
+      confirmButtonText:"بله",
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',        
+    }).then(res=>{
+      if(res.isConfirmed){
+        axios.delete(`https://ecomadminapi.azhadev.ir/api/admin/roles/${rolesID}`,{
+          headers:{
+            "Authorization":`Bearer ${userToken}`
+          }
+        }).then(res=>{
+          console.log(res);
+          if(res.status==200){
+            Swal.fire({
+              title:"تبریک",
+              text:"با موفقیت حذف شد",
+              icon:"success"
+            })
+            setDatas(prevdata=>prevdata.filter(data=>data.id!==rolesID))
+          }else{
+              Swal.fire({
+              title:"متاسفیم ",
+              text:"خطایی پیش آمده است",
+              icon:"error"
+            })
+          }
+        })
+      }
+    })
+  }
   return (
     <>
       <>

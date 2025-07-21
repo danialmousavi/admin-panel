@@ -1,5 +1,5 @@
 
-export default function Actions({ rowData }) {
+export default function Actions({ rowData ,handleDeleteRoles}) {
   return (
     <>
     <div className={`d-flex justify-content-center`}>
@@ -14,6 +14,7 @@ export default function Actions({ rowData }) {
       <i
         className="fas fa-times text-danger mx-1 hoverable_text pointer has_tooltip"
         title="حذف دسته"
+        onClick={()=>handleDeleteRoles(rowData.id)}
       ></i>
     </div>
     </>
