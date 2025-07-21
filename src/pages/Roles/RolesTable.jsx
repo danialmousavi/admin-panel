@@ -4,6 +4,7 @@ import Loading from "../../components/Loading";
 import PaginatedTable from "../../components/PaginatedTable";
 import Swal from "sweetalert2";
 import axios from "axios";
+import { Link, Outlet } from "react-router-dom";
 
 export default function RolesTable() {
   const [datas, setDatas] = useState([]);
@@ -127,9 +128,10 @@ export default function RolesTable() {
                   additionalFeild={additionalFeild}
                   searchparams={searchparams}
                 >
-                  <button className="btn btn-success d-flex justify-content-center align-items-center">
+                  <Link to="/roles/add-roles" className="btn btn-success d-flex justify-content-center align-items-center">
                     <i className="fas fa-plus text-light"></i>
-                  </button>
+                  </Link>
+                  <Outlet context={{setDatas}}/>
                 </PaginatedTable>
               </>
             ) : (
