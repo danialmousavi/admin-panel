@@ -1,48 +1,100 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import Loading from '../../components/Loading';
+import PaginatedTable from '../../components/PaginatedTable';
+import Swal from 'sweetalert2';
+import axios from 'axios';
 
 export default function PermisionsTable() {
+        const [datas, setDatas] = useState([]);
+      const [loading, setLoading] = useState(false);
+    
+      const dataInfo = [
+          { feild: "id", title: "#" },
+          { feild: "title", title: "عنوان محصول" },
+          { feild: "description", title: "توضیحات" },
+          { feild: "category", title: "عنوان دسته بندی" },
+        ];
+      
+      
+        const additionalFeild = [
+
+        ];
+          const searchparams = {
+        title: "جستجو",
+        placeholder: "قسمتی از عنوان را وارد کنید",
+        searchFeild: "title",
+        itemsPerPage: 10,
+      };
+        //get all discounts 
+    const fetchData = async () => {
+    setLoading(true); // شروع لودینگ
+
+    try {
+      const userToken = JSON.parse(localStorage.getItem("loginToken"));
+
+      const response = await axios.get(
+        `https://ecomadminapi.azhadev.ir/api/admin/permissions`,
+        {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        }
+      );
+
+      console.log(response);
+      if (response.status === 200) {
+        setDatas(response.data.data);
+        
+      } else {
+        Swal.fire({
+          title: "خطا",
+          text: response.data?.message || "مشکلی پیش آمده است",
+          icon: "error",
+          confirmButtonText: "باشه",
+        });
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "مشکلی در ارتباط با سرور رخ داده است.";
+
+      Swal.fire({
+        title: "خطا",
+        text: errorMessage,
+        icon: "error",
+        confirmButtonText: "باشه",
+      });
+    } finally {
+      setLoading(false); // پایان لودینگ
+    }
+  };
+  useEffect(()=>{
+    fetchData()
+  },[])
   return (
     <>
-                <table className="table table-responsive text-center table-hover table-bordered">
-                <thead className="table-secondary">
-                    <tr>
-                        <th>#</th>
-                        <th>عنوان</th>
-                        <th>توضیحات</th>
-                        <th>وضعیت</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td> مجوز شماره 1</td>
-                        <td>توضیحات در مورد این مجوز که چیست و کلیات آن کدام است</td>
-                        <td>
-                            <div className="form-check form-switch d-flex justify-content-center align-items-center p-0 h-100">
-                                <label className="form-check-label pointer" htmlFor="flexSwitchCheckDefault">فعال</label>
-                                <input className="form-check-input pointer mx-3" type="checkbox" id="flexSwitchCheckDefault" />
-                            </div> 
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <nav aria-label="Page navigation example" className="d-flex justify-content-center">
-                <ul className="pagination dir_ltr">
-                    <li className="page-item">
-                    <a className="page-link" href="#" aria-label="Previous">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                    </li>
-                    <li className="page-item"><a className="page-link" href="#">1</a></li>
-                    <li className="page-item"><a className="page-link" href="#">2</a></li>
-                    <li className="page-item"><a className="page-link" href="#">3</a></li>
-                    <li className="page-item">
-                    <a className="page-link" href="#" aria-label="Next">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                    </li>
-                </ul>
-            </nav>
+     {loading ? (
+        <Loading/>
+    ) : (
+        <>
+        {datas.length?(
+          <>
+
+          <PaginatedTable
+            datas={datas}
+            dataInfo={dataInfo}
+            additionalFeild={additionalFeild}
+            searchparams={searchparams}
+          >
+            <button className="btn btn-success d-flex justify-content-center align-items-center" >
+                <i className="fas fa-plus text-light"></i>
+            </button>
+          </PaginatedTable>
+      </>
+        ):(<>
+        <h1 className="text-center text-danger">اطلاعاتی در دسترس نیست!</h1>
+        </>)}
+        </>
+    )}
     </>
   )
 }
