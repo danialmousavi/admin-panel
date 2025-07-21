@@ -440,3 +440,8 @@ td , th {
   pointer-events: none;
   opacity: 0.5;
 }
+
+.sidebar-items-container{
+    max-height: calc(100vh - 210px) !important;
+    overflow: auto;
+}

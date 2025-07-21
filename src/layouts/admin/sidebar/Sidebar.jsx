@@ -13,7 +13,8 @@ export default function Sidebar() {
             <ul className="p-0 m-0">
                 <Avatar/>
                 <SidebarItems title='داشبورد' icon='fas fa-tachometer-alt' active={true} targetPath={'/'}/>
-
+                <div className='sidebar-items-container'>
+                  
                 <SidebarGroupTitle title="فروشگاه"/>
 
                 <SidebarItems icon='fas fa-stream' title='مدیریت گروه محصول' active={false} targetPath={'/category'}/>
@@ -43,6 +44,7 @@ export default function Sidebar() {
                 <SidebarItems icon='fas fa-question-circle' title='سوال ها' active={false} targetPath={'/questions'}/>
                 <SidebarItems icon='fas fa-comment' title='نظرات' active={false} targetPath={'/comments'}/>
 
+                </div>
                 {/* <li className="py-2 btn-group dropstart pe-4">
                     <i className="ms-3 icon fas fa-check text-light"></i>
                     <span className="hiddenable" data-bs-toggle="dropdown" aria-expanded="false">داشبورد</span>
