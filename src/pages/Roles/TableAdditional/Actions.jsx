@@ -1,14 +1,14 @@
+import { useNavigate } from "react-router-dom";
 
 export default function Actions({ rowData ,handleDeleteRoles}) {
+    const navigate=useNavigate();
   return (
     <>
     <div className={`d-flex justify-content-center`}>
         <i
         className="fas fa-edit text-warning mx-1 hoverable_text pointer has_tooltip "
         title="ویرایش دسته"
-        data-bs-toggle="modal"
-        data-bs-placement="top"
-        data-bs-target="#add_brand_modal"
+        onClick={()=>navigate('/roles/add-roles',{state:{rolesToEdit:rowData}})}
       ></i>
 
       <i

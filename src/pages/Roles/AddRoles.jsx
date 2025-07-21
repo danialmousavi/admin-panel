@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ModalsConatainer from '../../components/ModalsContainer';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
@@ -10,6 +10,12 @@ export default function AddRoles() {
   const { setDatas } = useOutletContext();
   const [permissions, setPermissions] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const location=useLocation();
+  const rolesToEdit=location.state?.rolesToEdit
+  console.log(rolesToEdit);
+  const [reInitialValues,setReInitialValues]=useState();
+
 
   // دریافت مجوزها از سرور
   const fetchPermissions = async () => {
@@ -55,47 +61,72 @@ export default function AddRoles() {
     return errors;
   };
 
+  //ادیت کردن نقش 
+useEffect(() => {
+  if (rolesToEdit) {
+    setReInitialValues({
+      title: rolesToEdit.title || '',
+      description: rolesToEdit.description || '',
+      permissions_id: rolesToEdit.permissions?.map((perm) => perm.id) || [],
+    });
+  } else {
+    setReInitialValues({
+      title: '',
+      description: '',
+      permissions_id: [],
+    });
+  }
+}, [rolesToEdit]);
   return (
     <ModalsConatainer
       id="add_role_modal"
       fullScreen={true}
-      title="افزودن نقش"
+       title={rolesToEdit ? "ویرایش نقش" : "افزودن نقش"}
       className="show d-block animate__animated animate__fadeInDown animate__fast"
       closeFunction={() => navigate(-1)}
     >
       <div className="container">
         <Formik
-          initialValues={{
+          initialValues={reInitialValues||{
             title: '',
             description: '',
             permissions_id: [],
           }}
+          enableReinitialize
           validate={validateForm}
           onSubmit={async (values, actions) => {
             const userToken = JSON.parse(localStorage.getItem('loginToken'));
-            try {
-              const res = await axios.post(
-                'https://ecomadminapi.azhadev.ir/api/admin/roles',
-                values,
-                {
-                  headers: {
-                    Authorization: `Bearer ${userToken}`,
-                  },
-                }
-              );
+            const url = rolesToEdit
+              ? `https://ecomadminapi.azhadev.ir/api/admin/roles/${rolesToEdit.id}/permissions`
+              : `https://ecomadminapi.azhadev.ir/api/admin/roles`;
 
-              if (res.status === 201) {
-                setDatas((prev) => [...prev, res.data.data]);
-                Swal.fire({
-                  title: 'نقش با موفقیت ایجاد شد',
-                  icon: 'success',
-                });
+            const method = rolesToEdit ? 'put' : 'post';
+
+            try {
+              const res = await axios[method](url, values, {
+                headers: {
+                  Authorization: `Bearer ${userToken}`,
+                },
+              });
+
+              if (res.status === 200 || res.status === 201) {
+                if (rolesToEdit) {
+                  // ویرایش موفق
+                  setDatas((prev) =>
+                    prev.map((item) => (item.id === res.data.data.id ? res.data.data : item))
+                  );
+                  Swal.fire({ title: 'نقش با موفقیت ویرایش شد', icon: 'success' });
+                } else {
+                  // افزودن موفق
+                  setDatas((prev) => [...prev, res.data.data]);
+                  Swal.fire({ title: 'نقش با موفقیت ایجاد شد', icon: 'success' });
+                }
                 navigate(-1);
               }
             } catch (error) {
               Swal.fire({
                 title: 'خطا!',
-                text: error.response?.data?.message || 'ارسال نقش با خطا مواجه شد.',
+                text: error.response?.data?.message || 'خطایی رخ داده است.',
                 icon: 'error',
               });
             }
