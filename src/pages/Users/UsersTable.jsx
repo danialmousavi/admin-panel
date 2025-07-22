@@ -2,18 +2,17 @@ import React, { useEffect, useState } from 'react'
 import Actions from './tableAdditional/Actions';
 import PaginatedDataTable from '../../components/PaginatedDataTable';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 
 export default function UsersTable() {
     const [data, setData] = useState([]);
       const [loading, setLoading] = useState(false);
       const [searchChar, setSearchChar] = useState("") 
       const [currentPage, setCurrentPage] = useState(1) // صفحه حال حاضر
-      const [countOnPage, setCountOnPage] = useState(8) // تعداد محصول در هر صفحه
+      const [countOnPage, setCountOnPage] = useState(8) // تعداد یوزر در هر صفحه
       const [pageCount, setPageCount] = useState(0) // تعداد کل صفحات
       const apiPath="https://ecomadminapi.azhadev.ir"
-
-        const dataInfo = [
+const dataInfo = [
     { field: "id", title: "#" },
 
     { field: "user_name", title: "نام کاربری" }, 
@@ -28,6 +27,19 @@ export default function UsersTable() {
     },
     {
       field: null,
+      title: "نقش",
+      elements: (rowData) => {
+        return(
+            <>
+                {rowData.roles?.map(r=>(
+                    <div key={r.id} className='text-center'>{r.title}</div>
+                ))}
+            </>
+        )
+      },
+    },
+    {
+      field: null,
       title: "عملیات",
       elements: (rowData) => <Actions rowData={rowData}  />,
     },
@@ -36,7 +48,7 @@ export default function UsersTable() {
     title: "جستجو",
     placeholder: "قسمتی از عنوان را وارد کنید",
   };
-    const handleGetProducts = async (page, count, char)=>{
+    const handleGetUsers = async (page, count, char)=>{
     const userToken=JSON.parse(localStorage.getItem("loginToken"))
     setLoading(true)
     await axios.get(`https://ecomadminapi.azhadev.ir/api/admin/users?page=${page}&count=${count}&searchChar=${char}`,{
@@ -48,7 +60,7 @@ export default function UsersTable() {
         res && setLoading(false)
         if(res.status==200){
         setData(res.data.data.data)//ست کردن دیتا
-        setPageCount(res.data.last_page)//ست کردن تعداد صفحات برای پجینیشن
+        setPageCount(res.data.data.last_page)//ست کردن تعداد صفحات برای پجینیشن
         }
         
     })
@@ -56,10 +68,10 @@ export default function UsersTable() {
 
   const handleSearch = (char)=>{
     setSearchChar(char)
-    handleGetProducts(1, countOnPage, char)
+    handleGetUsers(1, countOnPage, char)
   }
     useEffect(()=>{
-      handleGetProducts(currentPage, countOnPage, searchChar)
+      handleGetUsers(currentPage, countOnPage, searchChar)
     },[currentPage])
   
   return (
@@ -77,6 +89,7 @@ export default function UsersTable() {
     <Link to={`/users/add-user`} className="btn btn-success d-flex justify-content-center align-items-center">
         <i className="fas fa-plus text-light"></i>
     </Link>
+    <Outlet context={{setData}}/>
     </PaginatedDataTable>
     </>
     )
