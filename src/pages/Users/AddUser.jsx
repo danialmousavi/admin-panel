@@ -1,6 +1,7 @@
+// Refactored AddUser.jsx with edit mode handling
 import React, { useEffect, useState } from 'react';
 import ModalsConatainer from '../../components/ModalsContainer';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import Swal from 'sweetalert2';
@@ -12,7 +13,83 @@ export default function AddUser() {
   const [roles, setRoles] = useState([]);
   const [roleInputValue, setRoleInputValue] = useState("");
   const [selectedRoles, setSelectedRoles] = useState([]);
-  const setData=useOutletContext();
+  const {setData} = useOutletContext();
+  const location = useLocation();
+  const editUser = location.state?.editUser;
+  const [reInitialValues, setReInitialValues] = useState(null);
+
+  const fetchRoles = async () => {
+    try {
+      const token = JSON.parse(localStorage.getItem("loginToken"));
+      const res = await axios.get(`https://ecomadminapi.azhadev.ir/api/admin/roles`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.status === 200) setRoles(res.data.data);
+    } catch (error) {
+      Swal.fire("خطا", "خطا در دریافت نقش‌ها", "error");
+    }
+  };
+
+  const fetchUserDetails = async () => {
+    if (!editUser?.id) return;
+    try {
+      const token = JSON.parse(localStorage.getItem("loginToken"));
+      const res = await axios.get(`https://ecomadminapi.azhadev.ir/api/admin/users/${editUser.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = res.data.data;
+      setReInitialValues({
+        user_name: data.user_name || "",
+        first_name: data.first_name || "",
+        last_name: data.last_name || "",
+        phone: data.phone || "",
+        national_code: data.national_code || "",
+        email: data.email || "",
+        password: "", // Do not pre-fill password
+        birth_date: moment(data.birth_date, 'YYYY-MM-DD').locale('fa').format('YYYY/MM/DD'),
+        gender: data.gender || 1,
+        roles_id: data.roles.map(r => r.id) || [],
+      });
+      setSelectedRoles(data.roles);
+    } catch {
+      Swal.fire("خطا", "خطا در دریافت اطلاعات کاربر", "error");
+    }
+  };
+
+  useEffect(() => {
+    fetchRoles();
+    if (editUser?.id) fetchUserDetails();
+  }, [editUser]);
+
+  const addRole = (roleId, setFieldValue) => {
+    const role = roles.find(r => r.id === roleId);
+    if (role && !selectedRoles.some(r => r.id === roleId)) {
+      const newSelected = [...selectedRoles, role];
+      setSelectedRoles(newSelected);
+      setFieldValue("roles_id", newSelected.map(r => r.id));
+    }
+  };
+
+  const removeRole = (roleId, setFieldValue) => {
+    const updated = selectedRoles.filter(r => r.id !== roleId);
+    setSelectedRoles(updated);
+    setFieldValue("roles_id", updated.map(r => r.id));
+  };
+
+  const validationSchema = Yup.object({
+    user_name: Yup.string().required("نام کاربری الزامی است"),
+    first_name: Yup.string().required("نام الزامی است"),
+    last_name: Yup.string().required("نام خانوادگی الزامی است"),
+    phone: Yup.string().required("شماره موبایل الزامی است"),
+    national_code: Yup.string().required("کد ملی الزامی است"),
+    email: Yup.string().email("فرمت ایمیل معتبر نیست").required("ایمیل الزامی است"),
+    password: Yup.string().min(8, "حداقل ۸ کاراکتر").required("رمز عبور الزامی است"),
+    birth_date: Yup.string().required("تاریخ تولد الزامی است"),
+    gender: Yup.number().required("جنسیت الزامی است"),
+    roles_id: Yup.array().min(1, "حداقل یک نقش باید انتخاب شود").required("نقش الزامی است"),
+  });
+
   const initialValues = {
     user_name: '',
     first_name: '',
@@ -26,130 +103,74 @@ export default function AddUser() {
     roles_id: []
   };
 
-  const validationSchema = Yup.object().shape({
-    user_name: Yup.string().required("نام کاربری الزامی است"),
-    first_name: Yup.string().required('نام الزامی است'),
-    last_name: Yup.string().required('نام خانوادگی الزامی است'),
-    phone: Yup.string().required('شماره موبایل الزامی است'),
-    national_code: Yup.string().required('کد ملی الزامی است'),
-    email: Yup.string().email('فرمت ایمیل معتبر نیست').required('ایمیل الزامی است'),
-    password: Yup.string().min(8, 'حداقل ۸ کاراکتر').required('رمز عبور الزامی است'),
-    birth_date: Yup.string().required('تاریخ تولد الزامی است'),
-    gender: Yup.number().required('جنسیت الزامی است'),
-    roles_id: Yup.array().min(1, 'حداقل یک نقش باید انتخاب شود').required('نقش الزامی است'),
-  });
-
-  // دریافت نقش ها از API
-  const fetchRoles = async () => {
-    try {
-      const userToken = JSON.parse(localStorage.getItem("loginToken"));
-      const response = await axios.get(
-        `https://ecomadminapi.azhadev.ir/api/admin/roles`,
-        {
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-          },
-        }
-      );
-      console.log(response);
-      
-      if (response.status === 200) {
-        setRoles(response.data.data);
-      } else {
-        Swal.fire({
-          title: "خطا",
-          text: response.data?.message || "مشکلی پیش آمده است",
-          icon: "error",
-          confirmButtonText: "باشه",
-        });
-      }
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.message || "مشکلی در ارتباط با سرور رخ داده است.";
-
-      Swal.fire({
-        title: "خطا",
-        text: errorMessage,
-        icon: "error",
-        confirmButtonText: "باشه",
-      });
-    }
-  };
-
-  useEffect(() => {
-    fetchRoles();
-  }, []);
-
-  // اضافه کردن نقش
-  const addRole = (roleId, setFieldValue) => {
-    // پیدا کردن نقش از لیست roles
-    const roleToAdd = roles.find(r => r.id === roleId);
-    if (roleToAdd && !selectedRoles.some(r => r.id === roleId)) {
-      const newSelectedRoles = [...selectedRoles, roleToAdd];
-      setSelectedRoles(newSelectedRoles);
-
-      // مقدار roles_id فرم رو هم بروز کن
-      setFieldValue("roles_id", newSelectedRoles.map(r => r.id));
-    }
-  };
-
-  // حذف نقش
-  const removeRole = (roleId, setFieldValue) => {
-    const newSelectedRoles = selectedRoles.filter(r => r.id !== roleId);
-    setSelectedRoles(newSelectedRoles);
-
-    // مقدار roles_id فرم رو هم بروز کن
-    setFieldValue("roles_id", newSelectedRoles.map(r => r.id));
-  };
+  
   return (
     <ModalsConatainer
-      id={"add_user_modal"}
-      fullScreen={true}
-      title={"افزودن کاربر"}
+      id="add_user_modal"
+      fullScreen
+      title={editUser ? "ویرایش کاربر" : "افزودن کاربر"}
       className="show d-block animate__animated animate__fadeInDown animate__fast"
       closeFunction={() => navigate(-1)}
     >
       <Formik
-       initialValues={initialValues} 
-      validationSchema={validationSchema}
-      onSubmit={(values)=>{
-      const userToken = JSON.parse(localStorage.getItem("loginToken"));
+        initialValues={reInitialValues || initialValues}
+        validationSchema={validationSchema}
+        enableReinitialize
+onSubmit={async (values) => {
+  const token = JSON.parse(localStorage.getItem("loginToken"));
 
-        const newValues={
-          ...values,
-          birth_date: moment.from(values.birth_date, 'fa', 'YYYY/MM/DD').format('YYYY-MM-DD')
+  const payload = {
+    ...values,
+    birth_date: moment.from(values.birth_date, 'fa', 'YYYY/MM/DD').format('YYYY-MM-DD'),
+  };
+
+  const isEditMode = !!editUser?.id;
+  const url = isEditMode
+    ? `https://ecomadminapi.azhadev.ir/api/admin/users/${editUser.id}`
+    : `https://ecomadminapi.azhadev.ir/api/admin/users`;
+
+  const method = isEditMode ? axios.put : axios.post;
+
+  try {
+    const res = await method(url, payload, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    console.log(res);
+    
+    if ([200, 201].includes(res.status)) {
+      Swal.fire(
+        "عملیات موفق",
+        isEditMode ? "کاربر با موفقیت ویرایش شد" : "کاربر جدید با موفقیت افزوده شد",
+        "success"
+      ).then(() => {
+        if (isEditMode) {
+          // ویرایش کاربر
+          setData((prev) =>
+            prev.map((u) => (u.id === editUser.id ? res.data.data : u))
+          );
+        } else {
+          // افزودن کاربر جدید
+          setData((prev) => [...prev,res.data.data]);
         }
-        console.log(newValues);
-        axios.post("https://ecomadminapi.azhadev.ir/api/admin/users",newValues,{
-          headers:{
-            "Authorization":`Bearer ${userToken}`
-          }
-        }).then(res=>{
-          console.log(res);
-          
-          if(res.status==201){
-            Swal.fire({
-              title:"تبریک",
-              icon:"success",
-              text:"کاربر با موفقیت ایجاد شد"
-            }).then(()=>{
-              navigate(-1)
-            })
-          }else{
-             Swal.fire({
-              title:"متاسفیم",
-              icon:"error",
-              text:"مشکلی پیش آمده است"
-            })
-          }
-        })
-      }}>
+
+        navigate(-1); // اختیاری، اگه بخوای برگردی عقب
+      });
+    } else {
+      throw new Error();
+    }
+  } catch (error) {
+    Swal.fire("خطا", "مشکلی در ارسال اطلاعات رخ داده", "error");
+  }
+}}
+ 
+      >
         {({ setFieldValue, values }) => (
-          <Form>
-            <div className="container">
+          <Form className="container">
+            {/* Add your form fields here - same structure as before */}
+            {/* نقش‌ها */}
               <div className="row justify-content-center">
-              {/* نام کاربری */}
-              <div className="col-12 col-md-6 col-lg-8">
+
+                        <div className="col-12 col-md-6 col-lg-8">
                 <div className="input-group my-1" style={{ direction: 'ltr' }}>
                   <Field name="user_name" type="text" className="form-control" placeholder="مثلا gh123" />
                   <span className="input-group-text w_8rem justify-content-center">نام کاربری</span>
@@ -255,54 +276,37 @@ export default function AddUser() {
                       <span className="input-group-text justify-content-center">تصویر</span>
                     </div>
                   </div>
-    {/* نقش ها */}
-                <div className="col-12 col-md-6 col-lg-8 my-1">
-                  <label className="form-label">نقش ها</label>
-                  <select
-                    className="form-select"
-                    value={roleInputValue}
-                    onChange={e => {
-                      const roleId = parseInt(e.target.value);
-                      if (roleId) {
-                        addRole(roleId, setFieldValue);
-                      }
-                      setRoleInputValue(""); // بعد از انتخاب خالی کن
-                    }}
-                  >
-                    <option value="">نقشی انتخاب کنید</option>
-                    {roles.map(role => (
-                      <option key={role.id} value={role.id}>
-                        {role.title}
-                      </option>
-                    ))}
-                  </select>
-
-                  {/* نمایش نقش های انتخاب شده */}
-                  <div className="mt-2">
-                    {selectedRoles.map(role => (
-                      <span
-                        key={role.id}
-                        className="chips_elem d-inline-flex align-items-center m-1 p-1 rounded bg-primary text-white"
-                        style={{ cursor: 'default' }}
-                      >
-                        {role.title}
-                        <i
-                          className="fas fa-times ms-2 text-danger"
-                          style={{ cursor: 'pointer' }}
-                          onClick={() => removeRole(role.id, setFieldValue)}
-                        ></i>
-                      </span>
-                    ))}
-                  </div>
-                  {/* خطای اعتبارسنجی */}
-                  <ErrorMessage name="roles_id" component="div" className="text-danger" />
-                </div>
-              
-                {/* دکمه ذخیره */}
-                <div className="btn_box text-center col-12 col-md-6 col-lg-8 mt-4">
-                  <button type="submit" className="btn btn-primary">ذخیره</button>
-                </div>
+            <div className="col-12 col-md-6 col-lg-8 my-1">
+              <label className="form-label">نقش ها</label>
+              <select
+                className="form-select"
+                value={roleInputValue}
+                onChange={e => {
+                  const roleId = parseInt(e.target.value);
+                  if (roleId) addRole(roleId, setFieldValue);
+                  setRoleInputValue("");
+                }}
+              >
+                <option value="">نقشی انتخاب کنید</option>
+                {roles.map(role => (
+                  <option key={role.id} value={role.id}>{role.title}</option>
+                ))}
+              </select>
+              <div className="mt-2">
+                {selectedRoles.map(role => (
+                  <span key={role.id} className="badge bg-primary me-1">
+                    {role.title}
+                    <i className="fas fa-times ms-2 text-danger" onClick={() => removeRole(role.id, setFieldValue)}></i>
+                  </span>
+                ))}
               </div>
+              <ErrorMessage name="roles_id" component="div" className="text-danger" />
+            </div>
+            <div className="text-center mt-4">
+              <button type="submit" className="btn btn-primary">
+                {editUser ? "ذخیره تغییرات" : "ذخیره"}
+              </button>
+            </div>
             </div>
           </Form>
         )}

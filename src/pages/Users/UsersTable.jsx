@@ -3,6 +3,7 @@ import Actions from './tableAdditional/Actions';
 import PaginatedDataTable from '../../components/PaginatedDataTable';
 import axios from 'axios';
 import { Link, Outlet } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 export default function UsersTable() {
     const [data, setData] = useState([]);
@@ -41,13 +42,14 @@ const dataInfo = [
     {
       field: null,
       title: "عملیات",
-      elements: (rowData) => <Actions rowData={rowData}  />,
+      elements: (rowData) => <Actions rowData={rowData} handleDelteUser={handleDelteUser} />,
     },
   ];
   const searchParams = {
     title: "جستجو",
     placeholder: "قسمتی از عنوان را وارد کنید",
   };
+
     const handleGetUsers = async (page, count, char)=>{
     const userToken=JSON.parse(localStorage.getItem("loginToken"))
     setLoading(true)
@@ -74,6 +76,46 @@ const dataInfo = [
       handleGetUsers(currentPage, countOnPage, searchChar)
     },[currentPage])
   
+    //delete user
+    const handleDelteUser=(userID)=>{
+        console.log(userID);
+  const userToken=JSON.parse(localStorage.getItem("loginToken"))
+    Swal.fire({
+      title:"حذف نقش",
+      text:"آیا از حذف کاربر اطمینان دارید؟",
+      icon:"question",
+      showCancelButton:true,
+      showConfirmButton:true,
+      cancelButtonText:"خیر",
+      confirmButtonText:"بله",
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',        
+    }).then(res=>{
+      if(res.isConfirmed){
+        axios.delete(`https://ecomadminapi.azhadev.ir/api/admin/users/${userID}`,{
+          headers:{
+            "Authorization":`Bearer ${userToken}`
+          }
+        }).then(res=>{
+          console.log(res);
+          if(res.status==200){
+            Swal.fire({
+              title:"تبریک",
+              text:"با موفقیت حذف شد",
+              icon:"success"
+            })
+            setData(prevdata=>prevdata.filter(data=>data.id!==userID))
+          }else{
+              Swal.fire({
+              title:"متاسفیم ",
+              text:"خطایی پیش آمده است",
+              icon:"error"
+            })
+          }
+        })
+      }
+    })
+    }
   return (
     <>
      <PaginatedDataTable
@@ -89,7 +131,7 @@ const dataInfo = [
     <Link to={`/users/add-user`} className="btn btn-success d-flex justify-content-center align-items-center">
         <i className="fas fa-plus text-light"></i>
     </Link>
-    <Outlet context={{setData}}/>
+    <Outlet context={{setData,handleGetUsers }}/>
     </PaginatedDataTable>
     </>
     )
