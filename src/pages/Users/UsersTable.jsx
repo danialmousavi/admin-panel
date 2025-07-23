@@ -50,24 +50,34 @@ const dataInfo = [
     placeholder: "قسمتی از عنوان را وارد کنید",
   };
 
-    const handleGetUsers = async (page, count, char)=>{
-    const userToken=JSON.parse(localStorage.getItem("loginToken"))
-    setLoading(true)
-    await axios.get(`https://ecomadminapi.azhadev.ir/api/admin/users?page=${page}&count=${count}&searchChar=${char}`,{
-        headers:{
-            "Authorization":`Bearer ${userToken}`
-        }
-    }).then(res=>{
-        console.log(res);
-        res && setLoading(false)
-        if(res.status==200){
-        setData(res.data.data.data)//ست کردن دیتا
-        setPageCount(res.data.data.last_page)//ست کردن تعداد صفحات برای پجینیشن
-        }
-        
-    })
-  }
+const handleGetUsers = async (page, count, char) => {
+  const userToken = JSON.parse(localStorage.getItem("loginToken"));
+  setLoading(true);
+  try {
+    const res = await axios.get(
+      `https://ecomadminapi.azhadev.ir/api/admin/users?page=${page}&count=${count}&searchChar=${char}`,
+      {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      }
+    );
 
+    if (res.status === 200) {
+      setData(res.data.data.data); // ست کردن دیتا
+      setPageCount(res.data.data.last_page); // ست کردن تعداد صفحات برای پجینیشن
+    }
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    Swal.fire({
+      icon: 'error',
+      title: 'خطا در دریافت کاربران',
+      text: error?.response?.data?.message || 'مشکلی در دریافت اطلاعات کاربران رخ داده است.',
+    });
+  } finally {
+    setLoading(false);
+  }
+};
   const handleSearch = (char)=>{
     setSearchChar(char)
     handleGetUsers(1, countOnPage, char)

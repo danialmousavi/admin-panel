@@ -38,25 +38,30 @@ export default function GuaranteeTable() {
     };
 
     // fetch Gaurantee 
-    const fetchGaurantee = async () => {
-    const userToken = JSON.parse(localStorage.getItem("loginToken"));
-    setLoading(true)
-    await axios
-      .get(
-        `https://ecomadminapi.azhadev.ir/api/admin/guarantees `,
-        {
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-          },
-        }
-      )
-      .then((res) => {
-        // console.log(res);
-        setLoading(false);
-        setDatas(res.data.data);
-      });
-
-        };
+const fetchGaurantee = async () => {
+  const userToken = JSON.parse(localStorage.getItem("loginToken"));
+  setLoading(true);
+  try {
+    const res = await axios.get(
+      `https://ecomadminapi.azhadev.ir/api/admin/guarantees`,
+      {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      }
+    );
+    setDatas(res.data.data);
+  } catch (error) {
+    console.error("Fetch error:", error);
+    Swal.fire({
+      icon: 'error',
+      title: 'خطا در دریافت گارانتی‌ها',
+      text: error?.response?.data?.message || 'مشکلی پیش آمده است. لطفاً دوباره تلاش کنید.',
+    });
+  } finally {
+    setLoading(false);
+  }
+};
        useEffect(()=>{
         fetchGaurantee()
       },[])    

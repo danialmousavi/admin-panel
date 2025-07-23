@@ -23,7 +23,7 @@ export default function useAuthLogin() {
         .then((res) => {
           setIsLogin(true);
           setLoading(false);
-          dispatch(reciveRolesResponse(res))
+          dispatch(reciveRolesResponse(res.data))
         })
         .catch((err) => {
           setIsLogin(false);

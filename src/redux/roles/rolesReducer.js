@@ -1,3 +1,5 @@
+import { RECIVE_ROLES_ERROR, RECIVE_ROLES_RESPONSE, SEND_ROLES_REQUEST } from "./rolesType";
+
 const initialState={
     roles:[],
     error:"",
@@ -6,18 +8,18 @@ const initialState={
 
 const rolesReducer=(state=initialState,action)=>{
     switch (action.type) {
-        case 'SEND_ROLES_REQUEST':
+        case SEND_ROLES_REQUEST:
             return {
                 ...state,
                 loading: true
             };
-        case 'RECIVE_ROLES_RESPONSE':
+        case RECIVE_ROLES_RESPONSE:
             return {
                 roles: action.payload,
                 loading: false,
                 error:""
             };
-        case 'RECIVE_ROLES_ERROR':
+        case RECIVE_ROLES_ERROR:
             return {
                 error: action.payload,
                 loading: false,

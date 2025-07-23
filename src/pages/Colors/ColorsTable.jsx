@@ -40,25 +40,30 @@ export default function ColorsTable() {
         id: "add_color_modal",
       };
       // fetch colors 
-    const fetchColors = async () => {
-    const userToken = JSON.parse(localStorage.getItem("loginToken"));
-    setLoading(true)
-    await axios
-      .get(
-        `https://ecomadminapi.azhadev.ir/api/admin/colors `,
-        {
-          headers: {
-            Authorization: `Bearer ${userToken}`,
-          },
+      const fetchColors = async () => {
+        const userToken = JSON.parse(localStorage.getItem("loginToken"));
+        setLoading(true);
+        try {
+          const res = await axios.get(
+            `https://ecomadminapi.azhadev.ir/api/admin/colors`,
+            {
+              headers: {
+                Authorization: `Bearer ${userToken}`,
+              },
+            }
+          );
+          setDatas(res.data.data);
+        } catch (error) {
+          console.error("Fetch error:", error);
+          Swal.fire({
+            icon: 'error',
+            title: 'خطا در دریافت داده‌ها',
+            text: error?.response?.data?.message || 'مشکلی پیش آمده است. لطفاً دوباره تلاش کنید.',
+          });
+        } finally {
+          setLoading(false);
         }
-      )
-      .then((res) => {
-        // console.log(res);
-        setLoading(false);
-        setDatas(res.data.data);
-      });
-
-        };
+      };
        useEffect(()=>{
         fetchColors()
       },[])    
