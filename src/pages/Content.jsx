@@ -23,8 +23,15 @@ import GAllery from "./Products/Gallery/GAllery";
 import AddDiscounts from "./Discounts/AddDiscounts";
 import AddRoles from "./Roles/AddRoles";
 import AddUser from "./Users/AddUser";
+import PermissionComponent from "../components/PermissionComponent";
+import useHasPermission from "../hooks/permissionsHooks";
 export default function Content() {
   const admincontext = useContext(AdminContext);
+
+  const hasCategoryPermission=useHasPermission("read_categories");
+  const hasDiscountPermission=useHasPermission("read_discounts");
+  const hasUserPermission=useHasPermission("read_users");
+  const hasRolePermission=useHasPermission("read_roles");
   return (
     <section
       id="content_section"
@@ -34,31 +41,40 @@ export default function Content() {
     >
           <Routes>
             <Route path='/' element={<Dashboard/>}/>
-            <Route path='/products' element={<Products/>}/>
-            <Route path='/products/add' element={<AddProducts/>}/>
-            <Route path='/products/set-attr' element={<SetAttributes/>}/>
-            <Route path='/products/gallery'element={<GAllery/>}/>
+            <Route path='/products' element={<PermissionComponent component={<Products/>} pTitle="read_products"/>}/>
+            <Route path='/products/add' element={<PermissionComponent component={<AddProducts/>} pTitle="create_product"/>}/>
+            <Route path='/products/set-attr' element={<PermissionComponent component={<SetAttributes/>} pTitle="create_product_attr"/>}/>
+            <Route path='/products/gallery'element={<PermissionComponent component={<GAllery/>} pTitle="create_product_image"/>}/>
+            {hasCategoryPermission && (
             <Route path='/category' element={<Category/>}>
               <Route path=':categoryId' element={<Category/>}/>
             </Route>
-            <Route path='/category/:categoryId/attr' element={<AddCategoryAttribute/>}/>
+            )}
+            <Route path='/category/:categoryId/attr' element={<PermissionComponent component={<AddCategoryAttribute/>} pTitle="read_category_attrs"/>}/>
 
-            <Route path='/colors' element={<Colors/>}/>
-            <Route path='/guarantee' element={<Guarantee/>}/>
-            <Route path='/brands' element={<Brands/>}/>
+            <Route path='/colors' element={<PermissionComponent component={<Colors/>} pTitle="read_colors"/>}/>
+            <Route path='/guarantee' element={<PermissionComponent component={<Guarantee/>} pTitle="read_guarantees"/>}/>
+            <Route path='/brands' element={<PermissionComponent component={<Brands/>} pTitle="read_brands"/>}/>
+            {hasDiscountPermission&&(
             <Route path='/discounts' element={<Discounts/>}>
               <Route path="add_discount" element={<AddDiscounts/>}/>
             </Route>
+            )}
             <Route path='/cart' element={<Cart/>}/>
             <Route path='/orders' element={<Orders/>}/>
             <Route path='/delivery' element={<Deliveries/>}/>
+
+            {hasUserPermission &&(
             <Route path='/users' element={<Users/>}>
               <Route path="add-user" element={<AddUser/>}/>
             </Route>
+            )}
+            {hasRolePermission&&(
             <Route path='/roles' element={<Roles/>}>
             <Route path="add-roles" element={<AddRoles/>}/>
             </Route>
-            <Route path='/permisions' element={<Permisions/>}/>
+            )}
+            <Route path='/permisions' element={<PermissionComponent component={<Permisions/>} pTitle="read_permissions"/>}/>
             <Route path='/questions' element={<Questions/>}/>
             <Route path='/comments' element={<Comments/>}/>
             <Route path='*' element={<Dashboard/>}/>

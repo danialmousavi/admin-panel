@@ -62,7 +62,6 @@ const handleGetUsers = async (page, count, char) => {
         },
       }
     );
-    console.log(res);
     
     if (res.status === 200) {
       setData(res.data.data.data); // ست کردن دیتا
