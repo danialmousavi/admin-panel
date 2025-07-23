@@ -3,10 +3,15 @@ import AdminContext from '../../../context/adminLayoutContext'
 import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { useSelector } from 'react-redux'
 
 export default function Navbar() {
     const admincontext =useContext(AdminContext)
     const navigate=useNavigate()
+    const user=useSelector(state=>state.rolesReducer.roles)
+        const fullname=`${user.first_name||""} ${user.last_name||""}`.trim() || "ادمین اصلی";
+    
+    
     const handleLogout=()=>{
         const userToken = JSON.parse(localStorage.getItem("loginToken"));
         Swal.fire({
@@ -72,7 +77,7 @@ export default function Navbar() {
             <div className="left_content d-flex flex-row-reverse">
                 <i className="fas fa-grip-vertical fa-2x me-3 pointer" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"></i>
                 <ul className="dropdown-menu mini_menu" aria-labelledby="dropdownMenuButton1">
-                    <li className="my-2"><a className="dropdown-item d-block text-center">دانیال موسوی</a></li>
+                    <li className="my-2"><a className="dropdown-item d-block text-center">{fullname}</a></li>
                     <li className="my-2 d-flex justify-content-center align-items-center px-2">
                         <i className="fas fa-tachometer-alt"></i>
                         <a className="dropdown-item" href="#">داشبورد</a>
