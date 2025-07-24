@@ -26,6 +26,7 @@ import AddUser from "./Users/AddUser";
 import PermissionComponent from "../components/PermissionComponent";
 import useHasPermission from "../hooks/permissionsHooks";
 import AddDelivery from "./Deliveries/AddDelivery";
+import AddCart from "./Cart/AddCart";
 export default function Content() {
   const admincontext = useContext(AdminContext);
 
@@ -34,6 +35,8 @@ export default function Content() {
   const hasUserPermission=useHasPermission("read_users");
   const hasRolePermission=useHasPermission("read_roles");
   const hasDeliveryPermission=useHasPermission("read_deliveries")
+  const hasCartsPermission=useHasPermission("read_carts")
+
   return (
     <section
       id="content_section"
@@ -62,7 +65,11 @@ export default function Content() {
               <Route path="add_discount" element={<AddDiscounts/>}/>
             </Route>
             )}
-            <Route path='/cart' element={<Cart/>}/>
+            {hasCartsPermission&&(
+            <Route path='/cart' element={<Cart/>}>
+              <Route path="add_cart" element={<AddCart/>}/>
+            </Route>
+            )}
             <Route path='/orders' element={<Orders/>}/>
             {hasDeliveryPermission&&(
              <Route path='/delivery' element={<Deliveries/>}>

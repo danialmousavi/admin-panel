@@ -1,52 +1,143 @@
-import React from 'react'
+import { elements } from 'chart.js';
+import React, { useEffect, useState } from 'react'
+import PaginatedDataTable from '../../components/PaginatedDataTable';
+import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import axios from 'axios';
+import Actions from './tableAdditional/Actions';
 
 export default function CartTable() {
+      const [data, setData] = useState([]);
+      const [loading, setLoading] = useState(false);
+      const [searchChar, setSearchChar] = useState("") 
+      const [currentPage, setCurrentPage] = useState(1) // صفحه حال حاضر
+      const [countOnPage, setCountOnPage] = useState(8) // تعداد یوزر در هر صفحه
+      const [pageCount, setPageCount] = useState(0) // تعداد کل صفحات
+      const apiPath="https://ecomadminapi.azhadev.ir"
+const dataInfo = [
+    { field: "id", title: "#" },
+
+    { field: "user_id", title: "آیدی کاربر" }, 
+    {
+      field: null,
+      title: "نام کاربر",
+      elements: (rowData) => `${rowData.user.first_name||""} ${rowData.user.last_name||""}`,
+    },
+    {
+      field: null,
+      title: "موبایل کاربر",
+      elements:(rowdata)=>rowdata.user.phone
+    },
+    {
+      field: null,
+      title: " تعداد کالاها",
+      elements:(rowdata)=>rowdata.items.length
+    },
+    {
+      field: null,
+      title: "عملیات",
+      elements: (rowData) => <Actions rowData={rowData} handleDelteCart={handleDelteCart}/>,
+    },
+  ];
+  const searchParams = {
+    title: "جستجو",
+    placeholder: "قسمتی از عنوان را وارد کنید",
+  };
+
+const handleGetCarts = async (page=currentPage, count=countOnPage, char=searchChar) => {
+  const userToken = JSON.parse(localStorage.getItem("loginToken"));
+  setLoading(true);
+  try {
+    const res = await axios.get(
+      `https://ecomadminapi.azhadev.ir/api/admin/carts?page=${page}&count=${count}&searchChar=${char}`,
+      {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      }
+    );
+    console.log(res);
+    
+    if (res.status === 200) {
+      setData(res.data.data.data); // ست کردن دیتا
+      setPageCount(res.data.data.last_page); // ست کردن تعداد صفحات برای پجینیشن
+    }
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    Swal.fire({
+      icon: 'error',
+      title: 'خطا در دریافت کاربران',
+      text: error?.response?.data?.message || 'مشکلی در دریافت اطلاعات کاربران رخ داده است.',
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+  const handleSearch = (char)=>{
+    setSearchChar(char)
+    handleGetCarts(1, countOnPage, char)
+  }
+    useEffect(()=>{
+      handleGetCarts(currentPage, countOnPage, searchChar)
+    },[currentPage])
+  
+
+    //delete cart
+    const handleDelteCart=(cartID)=>{
+  const userToken=JSON.parse(localStorage.getItem("loginToken"))
+    Swal.fire({
+      title:"حذف نقش",
+      text:"آیا از حذف کاربر اطمینان دارید؟",
+      icon:"question",
+      showCancelButton:true,
+      showConfirmButton:true,
+      cancelButtonText:"خیر",
+      confirmButtonText:"بله",
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',        
+    }).then(res=>{
+      if(res.isConfirmed){
+        axios.delete(`https://ecomadminapi.azhadev.ir/api/admin/carts/${cartID}`,{
+          headers:{
+            "Authorization":`Bearer ${userToken}`
+          }
+        }).then(res=>{
+          console.log(res);
+          if(res.status==200){
+            Swal.fire({
+              title:"تبریک",
+              text:"با موفقیت حذف شد",
+              icon:"success"
+            })
+            setData(prevdata=>prevdata.filter(data=>data.id!==cartID))
+          }else{
+              Swal.fire({
+              title:"متاسفیم ",
+              text:"خطایی پیش آمده است",
+              icon:"error"
+            })
+          }
+        })
+      }
+    })
+    }
   return (
     <>
-    <table className="table table-responsive text-center table-hover table-bordered">
-                <thead className="table-secondary">
-                    <tr>
-                        <th>#</th>
-                        <th>آی دی مشتری</th>
-                        <th>نام مشتری</th>
-                        <th>تاریخ</th>
-                        <th>مبلغ کل سبد</th>
-                        <th>وضعیت</th>
-                        <th>عملیات</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>50</td>
-                        <td>قاسم بساکی</td>
-                        <td>1400/07/15</td>
-                        <td>100هزار تومان</td>
-                        <td>فعال</td>
-                        <td>
-                            <i className="fas fa-edit text-warning mx-1 hoverable_text pointer has_tooltip" title="ویرایش و جزئیات سبد" data-bs-toggle="modal" data-bs-placement="top" data-bs-target="#edit_cart_modal"></i>
-                            <i className="fas fa-times text-danger mx-1 hoverable_text pointer has_tooltip" title="حذف سبد" data-bs-toggle="tooltip" data-bs-placement="top"></i>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <nav aria-label="Page navigation example" className="d-flex justify-content-center">
-                <ul className="pagination dir_ltr">
-                  <li className="page-item">
-                    <a className="page-link" href="#" aria-label="Previous">
-                      <span aria-hidden="true">&raquo;</span>
-                    </a>
-                  </li>
-                  <li className="page-item"><a className="page-link" href="#">1</a></li>
-                  <li className="page-item"><a className="page-link" href="#">2</a></li>
-                  <li className="page-item"><a className="page-link" href="#">3</a></li>
-                  <li className="page-item">
-                    <a className="page-link" href="#" aria-label="Next">
-                      <span aria-hidden="true">&laquo;</span>
-                    </a>
-                  </li>
-                </ul>
-        </nav>
+  <PaginatedDataTable
+    tableData={data}
+    dataInfo={dataInfo}
+    searchParams={searchParams}
+    loading={loading}
+    currentPage={currentPage}
+    setCurrentPage={setCurrentPage}
+    pageCount={pageCount}
+    handleSearch={handleSearch}
+    >
+    <Link to={`/users/add-user`} className="btn btn-success d-flex justify-content-center align-items-center">
+        <i className="fas fa-plus text-light"></i>
+    </Link>
+    {/* <Outlet context={{setData,handleGetUsers }}/> */}
+    </PaginatedDataTable>
     </>
   )
 }
