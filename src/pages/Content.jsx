@@ -25,6 +25,7 @@ import AddRoles from "./Roles/AddRoles";
 import AddUser from "./Users/AddUser";
 import PermissionComponent from "../components/PermissionComponent";
 import useHasPermission from "../hooks/permissionsHooks";
+import AddDelivery from "./Deliveries/AddDelivery";
 export default function Content() {
   const admincontext = useContext(AdminContext);
 
@@ -62,7 +63,9 @@ export default function Content() {
             )}
             <Route path='/cart' element={<Cart/>}/>
             <Route path='/orders' element={<Orders/>}/>
-            <Route path='/delivery' element={<Deliveries/>}/>
+            <Route path='/delivery' element={<Deliveries/>}>
+            <Route path="add_delivery" element={<AddDelivery/>}/>
+            </Route>
 
             {hasUserPermission &&(
             <Route path='/users' element={<Users/>}>

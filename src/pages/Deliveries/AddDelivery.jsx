@@ -1,10 +1,15 @@
 import React from 'react'
 import ModalsConatainer from '../../components/ModalsContainer'
+import { useNavigate } from 'react-router-dom';
 
 export default function AddDelivery() {
+    const navigate = useNavigate();
   return (
     <>
-    <ModalsConatainer id={"add_delivery_modal"} fullScreen={true} title={"افزودن روش ارسال"}>
+    <ModalsConatainer id={"add_delivery_modal"} fullScreen={false} title={"افزودن روش ارسال"} 
+    className="show d-block animate__animated animate__fadeInDown animate__fast"
+      closeFunction={() => navigate(-1)}
+    >
                         <div className="container">
                     <div className="row justify-content-center">
                         <div className="col-12">
