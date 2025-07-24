@@ -8,7 +8,7 @@ export default function Actions({ rowData ,handleDeleteDelivery}) {
         <i
         className="fas fa-edit text-warning mx-1 hoverable_text pointer has_tooltip "
         title="ویرایش دسته"
-        // onClick={()=>navigate('/discounts/add_discount',{state:{discountToEdit:rowData}})}
+        onClick={()=>navigate('/delivery/add_delivery',{state:{deliveryToEdit:rowData}})}
       ></i>
 
       <i

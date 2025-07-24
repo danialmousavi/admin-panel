@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ModalsConatainer from "../../components/ModalsContainer";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
@@ -9,6 +9,12 @@ import Swal from "sweetalert2";
 export default function AddDelivery() {
   const navigate = useNavigate();
 const { fetchData } = useOutletContext();
+const location=useLocation();
+const deliveryToEdit=location.state?.deliveryToEdit
+
+console.log(deliveryToEdit);
+
+const [reininitialValues,setReinitialValues] = useState();
   const initialValues = {
     title: "",
     amount: "",
@@ -37,40 +43,65 @@ const { fetchData } = useOutletContext();
       ),
   });
 
+
+  //edit delivery
+  useEffect(()=>{
+    if (deliveryToEdit) {
+      setReinitialValues({
+        title: deliveryToEdit.title,
+        amount: deliveryToEdit.amount,
+        time: deliveryToEdit.time,
+        time_unit: deliveryToEdit.time_unit,
+      });
+    } else {
+      setReinitialValues(initialValues);
+    }
+  },[deliveryToEdit])
   return (
     <ModalsConatainer
       id="add_delivery_modal"
       fullScreen={false}
       title="افزودن روش ارسال"
       className="show d-block animate__animated animate__fadeInDown animate__fast"
-      closeFunction={() => navigate("/deliveries")}
+      closeFunction={() => navigate("/delivery")}
     >
       <Formik
-        initialValues={initialValues}
+        initialValues={reininitialValues||initialValues}
+        enableReinitialize
         validationSchema={validationSchema}
         
-        onSubmit={async (values) => {
+onSubmit={async (values) => {
   const userToken = JSON.parse(localStorage.getItem("loginToken"));
 
-  try {
-    const res = await axios.post(
-      "https://ecomadminapi.azhadev.ir/api/admin/deliveries",
-      values,
-      {
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-      }
-    );
+  const isEdit = !!deliveryToEdit; // اگر وجود داشت یعنی ویرایش
 
-    if (res.status === 201) {
+  const url = isEdit
+    ? `https://ecomadminapi.azhadev.ir/api/admin/deliveries/${deliveryToEdit.id}`
+    : "https://ecomadminapi.azhadev.ir/api/admin/deliveries";
+
+  const method = isEdit ? "put" : "post";
+
+  try {
+    const res = await axios[method](url, values, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    });
+
+    const successMessage = isEdit
+      ? "روش ارسال با موفقیت ویرایش شد"
+      : "روش ارسال با موفقیت اضافه شد";
+
+    const successStatus = isEdit ? 200 : 201;
+
+    if (res.status === successStatus) {
       Swal.fire({
         title: "موفق",
-        text: "روش ارسال با موفقیت اضافه شد",
+        text: successMessage,
         icon: "success",
       }).then(() => {
-       fetchData(); // ⬅️ اینجا جدول رو آپدیت کن
-        navigate(-1); // برگشت به جدول
+        fetchData(); // رفرش جدول
+        navigate(-1); // بازگشت
       });
     } else {
       Swal.fire({
@@ -82,11 +113,14 @@ const { fetchData } = useOutletContext();
   } catch (error) {
     Swal.fire({
       title: "خطا",
-      text: error?.response?.data?.message || "مشکلی در ارتباط با سرور رخ داده است.",
+      text:
+        error?.response?.data?.message ||
+        "مشکلی در ارتباط با سرور رخ داده است.",
       icon: "error",
     });
   }
 }}
+
       >
         <Form>
           <div className="container">
