@@ -1,12 +1,21 @@
 import { useSelector } from "react-redux";
 
-const useHasPermission = (pTitle) => {
-    const user= useSelector(state => state.rolesReducer.roles);
-    const roles=user.roles
-    let permissions=[];
-    for (const role of roles) {
-        permissions=[...permissions, ...role.permissions];
+ const useHasPermission = (pTitle)=>{
+    const user = useSelector(state=>state.rolesReducer.roles)
+    const roles = user.roles;
+    let permissions = []
+    for (const role of roles)  permissions = [...permissions, ...role.permissions]
+    const isAdmin = roles.findIndex(r=>r.title === "admin") > -1
+    return isAdmin || 
+            (typeof(pTitle) === "object" 
+            ? hasOneOfPerm(permissions, pTitle) 
+            : permissions.findIndex(p=>p.title.includes(pTitle)) > -1)
+}
+
+const hasOneOfPerm = (permissions, pTitles)=>{
+    for (const pTitle of pTitles) {
+        if(permissions.findIndex(p=>p.title.includes(pTitle)) > -1) return true
     }
-    return permissions.findIndex(p=>p.title.includes(pTitle))>-1;
+    return false
 }
 export default useHasPermission;

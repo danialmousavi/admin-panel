@@ -1,7 +1,10 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
-export default function SidebarItems({title,icon, active,targetPath}) {
-  return (
+import useHasPermission from "../../../hooks/permissionsHooks";
+export default function SidebarItems({title,icon, active,targetPath,pTitle}) {
+  const hasPerm = useHasPermission(pTitle)
+  
+  return hasPerm && (
     <NavLink
     to={targetPath}
       className={`py-1 text-start pe-4 sidebar_menu_item mt-2 ${active?"active":""} siebar_items`}
