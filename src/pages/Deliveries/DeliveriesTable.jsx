@@ -77,7 +77,8 @@ export default function DeliveriesTable() {
     }
   };
   useEffect(()=>{
-    fetchData()
+    
+    fetchData();
   },[])
 
     //delete Delivery
@@ -146,7 +147,7 @@ const handleDeleteDelivery = async (deliveryId) => {
             <Link to={`/delivery/add_delivery`} className="btn btn-success d-flex justify-content-center align-items-center" >
                 <i className="fas fa-plus text-light"></i>
             </Link>
-            <Outlet context={{setDatas}}/>
+            <Outlet context={{fetchData}}/>
           </PaginatedTable>
       </>
         ):(<>
