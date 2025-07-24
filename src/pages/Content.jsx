@@ -33,6 +33,7 @@ export default function Content() {
   const hasDiscountPermission=useHasPermission("read_discounts");
   const hasUserPermission=useHasPermission("read_users");
   const hasRolePermission=useHasPermission("read_roles");
+  const hasDeliveryPermission=useHasPermission("read_deliveries")
   return (
     <section
       id="content_section"
@@ -63,9 +64,12 @@ export default function Content() {
             )}
             <Route path='/cart' element={<Cart/>}/>
             <Route path='/orders' element={<Orders/>}/>
-            <Route path='/delivery' element={<Deliveries/>}>
-            <Route path="add_delivery" element={<AddDelivery/>}/>
+            {hasDeliveryPermission&&(
+             <Route path='/delivery' element={<Deliveries/>}>
+               <Route path="add_delivery" element={<AddDelivery/>}/>
             </Route>
+            )}
+ 
 
             {hasUserPermission &&(
             <Route path='/users' element={<Users/>}>
