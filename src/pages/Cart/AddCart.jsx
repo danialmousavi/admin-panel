@@ -1,6 +1,6 @@
 
 // import { addNewCartService } from '../../services/carts';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { initialValues, onSubmit, validationSchema } from './core';
@@ -11,13 +11,16 @@ import SelectSearch from 'react-select-search';
 import 'react-select-search/style.css'
 const AddCart = () => {
     const navigate = useNavigate()
+    const location=useLocation();
+    const editCart=location.state?.editCart;
+    
     const {handleGetCarts} = useOutletContext()
     const [allProducts, setAllProducts] = useState([])
     const [currentProduct, setCurrentProduct] = useState(null)
     const [colors, setColors] = useState([])
     const [guarantees, setGuarantees] = useState([])
     const [selectedProductsInfo, setSelectedProductsInfo] = useState([])
-
+    const [reInitialValue,setReInitialValue]=useState(null)
     const handleGetAllProductTitles = async ()=>{
       const usertoken=JSON.parse(localStorage.getItem("loginToken"))
         const res = await axios.get("https://ecomadminapi.azhadev.ir/api/admin/products",{
@@ -46,6 +49,7 @@ const AddCart = () => {
     }
 
     const handleConfirmAddCart = async (formik)=>{
+      formik.setSubmitting(true)
       let products=[]
       for(const p of selectedProductsInfo){
         products.push({
@@ -56,8 +60,31 @@ const AddCart = () => {
         })
       }
       const usertoken=JSON.parse(localStorage.getItem("loginToken"))
+      if(editCart){
+        const res = await axios.put(`https://ecomadminapi.azhadev.ir/api/admin/carts/${editCart.id}`, {
+            user_id: formik.values.user_id,
+            products
+        },
+        {
+          headers:{
+            "Authorization":`Bearer ${usertoken}`
+          }
+        })
 
-        const res = await axios.post("https://ecomadminapi.azhadev.ir/api/admin/carts", {
+        if (res.status === 200) {
+            Swal.fire({
+                title: res.data.message||"سبد خرید با موفقیت ویرایش شد",
+                icon: "success",
+                confirmButtonText: "باشه"
+            }).then(()=>{
+                handleGetCarts()
+                navigate(-1);
+            })
+
+        }
+        formik.setSubmitting(false)
+      }else{
+                const res = await axios.post("https://ecomadminapi.azhadev.ir/api/admin/carts", {
             user_id: formik.values.user_id,
             products
         },
@@ -77,15 +104,42 @@ const AddCart = () => {
                 navigate(-1);
             })
 
-        }
+        } 
+        formik.setSubmitting(false)
+      }
+
     }
 
     const handleDeleteProduct = (id)=>{
         setSelectedProductsInfo(old=>old.filter(o=>o.id != id))
     }
-    
+    const handleGetCartToEdit=async()=>{
+      const usertoken=JSON.parse(localStorage.getItem("loginToken"))
+
+      const res=await axios.get(`https://ecomadminapi.azhadev.ir/api/admin/carts/${editCart.id}`,{
+        headers:{
+          "Authorization":`Bearer ${usertoken}`
+        }
+      })
+      if(res.status==200){
+        let products=[];
+        const cart=res.data.data;
+        setReInitialValue({...initialValues,user_id:cart.user_id})
+        for(const item of cart.items){
+          products.push({
+            id:item.id,
+            product:item.product,
+            guarantee:item.guarantee,
+            color:item.color,
+            count:item.count
+          })
+        }
+        setSelectedProductsInfo(products)        
+      }
+    }
     useEffect(()=>{
         handleGetAllProductTitles()
+        editCart&&handleGetCartToEdit()
     },[])
 
     return (
@@ -99,7 +153,8 @@ const AddCart = () => {
             >
                 <div className="container">
                     <Formik
-                    initialValues={initialValues}
+                    initialValues={reInitialValue||initialValues}
+                    enableReinitialize
                     onSubmit={(values, actions)=>onSubmit(values, actions, setSelectedProductsInfo, currentProduct)}
                     validationSchema={validationSchema}
                     >
@@ -181,7 +236,7 @@ const AddCart = () => {
                                                             </div>
                                                         </div>
                                                         <div className="btn_box text-center col-12 col-md-6 col-lg-8 mt-4">
-                                                            <button type='button' className="btn btn-primary" onClick={()=>handleConfirmAddCart(formik)}>ذخیره</button>
+                                                            <button type='button' className="btn btn-primary" onClick={()=>handleConfirmAddCart(formik)} disabled={formik.isSubmitting}>{!formik.isSubmitting?"ذخیره":"درحال ارسال..."}</button>
                                                         </div>
                                                     </>
                                                 ) : (<h6 className='text-center text-primary'>محصولات خود را مشخص کنید</h6>)

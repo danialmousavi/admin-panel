@@ -7,9 +7,9 @@ const Actions = ({ rowData,handleDelteCart}) => {
       <i
         className="fas fa-edit text-warning mx-1 hoverable_text pointer has_tooltip"
         title="ویرایش محصول"
-        // onClick={()=>navigate("/carts/add-carts",{
-        //     state:{editUser:rowData}
-        // })}
+        onClick={()=>navigate("/cart/add_cart",{
+            state:{editCart:rowData}
+        })}
       ></i>
 
       <i
