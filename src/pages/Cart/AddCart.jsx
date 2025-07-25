@@ -16,7 +16,6 @@ const AddCart = () => {
     const [currentProduct, setCurrentProduct] = useState(null)
     const [colors, setColors] = useState([])
     const [guarantees, setGuarantees] = useState([])
-    const [selectedProducts, setSelectedProducts] = useState([])
     const [selectedProductsInfo, setSelectedProductsInfo] = useState([])
 
     const handleGetAllProductTitles = async ()=>{
@@ -47,11 +46,20 @@ const AddCart = () => {
     }
 
     const handleConfirmAddCart = async (formik)=>{
+      let products=[]
+      for(const p of selectedProductsInfo){
+        products.push({
+          product_id:p.product.id,
+          color_id:p.color?.id||"",
+          guarantee_id:p.guarantee?.id||"",
+          count:p.count
+        })
+      }
       const usertoken=JSON.parse(localStorage.getItem("loginToken"))
 
         const res = await axios.post("https://ecomadminapi.azhadev.ir/api/admin/carts", {
             user_id: formik.values.user_id,
-            products: selectedProducts
+            products
         },
         {
           headers:{
@@ -73,8 +81,6 @@ const AddCart = () => {
     }
 
     const handleDeleteProduct = (id)=>{
-        const index = selectedProductsInfo.findIndex(p=>p.id == id)
-        setSelectedProducts(old=> old.splice(index,1))
         setSelectedProductsInfo(old=>old.filter(o=>o.id != id))
     }
     
@@ -94,7 +100,7 @@ const AddCart = () => {
                 <div className="container">
                     <Formik
                     initialValues={initialValues}
-                    onSubmit={(values, actions)=>onSubmit(values, actions, setSelectedProducts, setSelectedProductsInfo, currentProduct)}
+                    onSubmit={(values, actions)=>onSubmit(values, actions, setSelectedProductsInfo, currentProduct)}
                     validationSchema={validationSchema}
                     >
                         {
@@ -103,7 +109,7 @@ const AddCart = () => {
                                     <Form>
                                         <div className="row my-3 justify-content-center">
                                             <div className="col-12 col-md-4 col-lg-2 my-1">
-                                                <Field type="text" name="user_id" className="form-control" placeholder="آی دی مشتری" disabled={selectedProducts.length > 0}/>
+                                                <Field type="text" name="user_id" className="form-control" placeholder="آی دی مشتری" />
                                                 <br/>
                                                 <ErrorMessage name='user_id' >
                                                       { msg => <div style={{ color: 'red' }}>{msg}</div> }
@@ -155,11 +161,11 @@ const AddCart = () => {
                                                         <div className="input-group my-3 dir_ltr">
                                                             <span className="input-group-text text-end font_08 w-100 text_truncate">
                                                                 <i className="fas fa-times text-danger hoverable_text pointer mx-1 has_tooltip" title="حذف محصول از سبد" data-bs-placement="top" onClick={()=>handleDeleteProduct(product.id)}></i>
-                                                                {product.productName}
-                                                                (قیمت واحد: {(product.price).toLocaleString()})
-                                                                (گارانتی: {product.guarantee})
+                                                                {product.product.title}
+                                                                (قیمت واحد: {(product.product.price).toLocaleString()})
+                                                                (گارانتی: {product.guarantee.title})
                                                                 ({product.count} عدد)
-                                                                <i className="fas fa-circle mx-1" style={{ color: product.color }}></i>
+                                                                <i className="fas fa-circle mx-1" style={{ color: product.color.code }}></i>
                                                             </span>
                                                         </div>
                                                     </div>
@@ -170,7 +176,7 @@ const AddCart = () => {
                                                     <>
                                                         <div className="col-6">
                                                             <div className="input-group my-3 dir_ltr">
-                                                                <span className="input-group-text justify-content-center w-75" >{(selectedProductsInfo.map(p=>p.count*p.price).reduce((a, b)=>a+b)).toLocaleString()}</span>
+                                                                <span className="input-group-text justify-content-center w-75" >{(selectedProductsInfo.map(p=>p.count*p.product.price).reduce((a, b)=>a+b)).toLocaleString()}</span>
                                                                 <span className="input-group-text w-25 text-center"> جمع کل </span>
                                                             </div>
                                                         </div>
