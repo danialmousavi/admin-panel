@@ -17,10 +17,12 @@
     "chart.js": "^4.5.0",
     "formik": "^2.4.6",
     "jalali-moment": "^3.3.11",
+    "prop-types": "^15.8.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.6.3",
+    "react-select-search": "^4.1.8",
     "sweetalert2": "^11.22.2",
     "yup": "^1.6.1"
   },

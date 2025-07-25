@@ -445,3 +445,54 @@ td , th {
     max-height: calc(100vh - 210px) !important;
     overflow: auto;
 }
+
+
+ 
+  .select-search-container{
+    width: 100% !important;
+  }
+  
+  .select-search-input{
+    font-family: "BYekan" !important;
+    text-align: right !important;
+    height: 39px !important;
+    border: 1px solid #ced4da !important;
+    border-radius: 0.25rem !important;
+  }
+
+  .select-search-input:focus{
+    border: 1px solid #ced4da !important;
+  }
+
+  .select-search-select *{
+    font-family: "BYekan" !important;
+    text-align: right !important;
+  }
+/* فایل: src/style.css یا public/style.css یا هر فایل css پروژه خودت */
+.select-search-container,
+.select-search-input,
+.select-search-select,
+.select-search-option,
+.select-search-not-found {
+    background: #fff !important;
+    color: #222 !important;
+}
+
+.select-search-option,
+.select-search-not-found {
+    color: #222 !important;
+}
+
+/* حالت هاور گزینه‌ها */
+.select-search-option:not(.select-search-is-selected):hover,
+.select-search-is-highlighted {
+    background: #f0f0f0 !important;
+    color: #222 !important;
+}
+
+/* گزینه انتخاب‌شده */
+.select-search-is-selected {
+    font-weight: bold;
+    color: #1976d2 !important;
+    background: #e3e3e3 !important;
+}

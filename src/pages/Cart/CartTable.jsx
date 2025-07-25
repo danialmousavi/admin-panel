@@ -1,7 +1,7 @@
 import { elements } from 'chart.js';
 import React, { useEffect, useState } from 'react'
 import PaginatedDataTable from '../../components/PaginatedDataTable';
-import { Link } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import Actions from './tableAdditional/Actions';
@@ -133,10 +133,10 @@ const handleGetCarts = async (page=currentPage, count=countOnPage, char=searchCh
     pageCount={pageCount}
     handleSearch={handleSearch}
     >
-    <Link to={`/users/add-user`} className="btn btn-success d-flex justify-content-center align-items-center">
+    <Link to={`/cart/add_cart`} className="btn btn-success d-flex justify-content-center align-items-center">
         <i className="fas fa-plus text-light"></i>
     </Link>
-    {/* <Outlet context={{setData,handleGetUsers }}/> */}
+    <Outlet context={{handleGetCarts }}/>
     </PaginatedDataTable>
     </>
   )
