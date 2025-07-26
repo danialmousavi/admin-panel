@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import AdminContext from '../../../context/adminLayoutContext'
 import Swal from 'sweetalert2'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
 
@@ -66,9 +66,9 @@ export default function Navbar() {
         <div className="container-fluid h-100 pe-0">
 
             <div className="right_content h-100 py-1 bg-dark">
-                <a className="navbar-brand h-100" href="/">
+                <Link className="navbar-brand h-100" to="/">
                     <img src="/assets/images/logo.png" className="h-100"/>
-                </a>
+                </Link>
                 <div className="form-check form-switch mx-4 d-none d-md-block">
                     <input id="handle_toggle_sidemenu" className="form-check-input pointer" type="checkbox" onChange={(e)=>admincontext.setShowSidebar(e.target.checked)} />
                 </div>

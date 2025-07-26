@@ -27,6 +27,8 @@ import PermissionComponent from "../components/PermissionComponent";
 import useHasPermission from "../hooks/permissionsHooks";
 import AddDelivery from "./Deliveries/AddDelivery";
 import AddCart from "./Cart/AddCart";
+import OrderDetails from "./Orders/OrderDetails";
+import AddOrder from "./Orders/AddOrder";
 export default function Content() {
   const admincontext = useContext(AdminContext);
 
@@ -36,6 +38,7 @@ export default function Content() {
   const hasRolePermission=useHasPermission("read_roles");
   const hasDeliveryPermission=useHasPermission("read_deliveries")
   const hasCartsPermission=useHasPermission("read_carts")
+  const hasOrdersPermission=useHasPermission("read_orders")
 
   return (
     <section
@@ -62,25 +65,29 @@ export default function Content() {
             <Route path='/brands' element={<PermissionComponent component={<Brands/>} pTitle="read_brands"/>}/>
             {hasDiscountPermission&&(
             <Route path='/discounts' element={<Discounts/>}>
-              <Route path="add_discount" element={<AddDiscounts/>}/>
+              <Route path="add_discount" element={<PermissionComponent component={<AddDiscounts/>} pTitle="create_discount"/>}/>
             </Route>
             )}
             {hasCartsPermission&&(
             <Route path='/cart' element={<Cart/>}>
-              <Route path="add_cart" element={<AddCart/>}/>
+              <Route path="add_cart" element={<PermissionComponent component={<AddCart/>} pTitle="create_cart"/>}/>
             </Route>
             )}
-            <Route path='/orders' element={<Orders/>}/>
+
+            <Route path='/orders' element={<Orders/>}>
+              <Route path="add-order" element={<PermissionComponent component={<AddOrder/>} pTitle="create_order"/>}/>
+            </Route>
+
             {hasDeliveryPermission&&(
              <Route path='/delivery' element={<Deliveries/>}>
-               <Route path="add_delivery" element={<AddDelivery/>}/>
+               <Route path="add_delivery" element={<PermissionComponent component={<AddDelivery/>} pTitle="create_delivery"/>}/>
             </Route>
             )}
  
 
             {hasUserPermission &&(
             <Route path='/users' element={<Users/>}>
-              <Route path="add-user" element={<AddUser/>}/>
+              <Route path="add-user" element={<PermissionComponent component={<AddUser/>} pTitle="create_user"/>}/>
             </Route>
             )}
             {hasRolePermission&&(
