@@ -6,6 +6,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import Actions from "./TableAddition/Actions";
+import { log10 } from "chart.js/helpers";
 
 const TableProduct = () => {
   const [data, setData] = useState([]);
@@ -36,7 +37,7 @@ const TableProduct = () => {
     {
       field: null,
       title: "عملیات",
-      elements: (rowData) => <Actions rowData={rowData} handleDeleteProducts={handleDeleteProducts} />,
+      elements: (rowData) => <Actions rowData={rowData} handleDeleteProducts={handleDeleteProducts} handleToggleNotification={handleToggleNotification}/>,
     },
   ];
   const searchParams = {
@@ -112,6 +113,33 @@ const TableProduct = () => {
         }
     })
 
+  }
+
+  //Toggle notification
+  const handleToggleNotification=(productId)=>{
+    const userToken=JSON.parse(localStorage.getItem("loginToken"))
+    console.log(productId);
+    axios.get(`https://ecomadminapi.azhadev.ir/api/admin/products/toggle_notification/${productId}`,{
+      headers:{
+        "Authorization":`Bearer ${userToken}`
+      }
+    }).then(res=>{
+      console.log(res);
+      if(res.status==200){
+        Swal.fire({
+          title:"موفق",
+          text:"عملیات با موفقیت انجام شد",
+          icon:"success"
+        })
+        handleGetProducts(currentPage, countOnPage, searchChar)
+      }else{
+        Swal.fire({
+          title:"متاسفیم",
+          text:"مشکلی پیش آمده است!",
+          icon:"error"
+        })
+      }
+    })
   }
   return (
     <PaginatedDataTable

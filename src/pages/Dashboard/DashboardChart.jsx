@@ -1,73 +1,59 @@
-import React, { useRef, useEffect } from "react";
 import Chart from "chart.js/auto";
-
-export default function DashboardChart({ labels, datapoints }) {
-  const chartRef = useRef(null);
-  const chartInstanceRef = useRef(null);
-
-  useEffect(() => {
+let chart;
+export const setDashboardChart = (labels , datapoints)=>{
     const data = {
-      labels: labels,
-      datasets: [
-        {
-          label: "فروش ماه",
-          data: datapoints,
-          borderColor: "#0062ff",
-          fill: true,
-          cubicInterpolationMode: "monotone",
-          tension: 0.4,
-        },
-      ],
+        labels: labels,
+        datasets: [
+            {
+                label: 'فروش ماه',
+                data: datapoints,
+                borderColor: "#0062ff",
+                fill: true,
+                cubicInterpolationMode: 'monotone',
+                tension: 0.4
+            }
+        ]
     };
 
     const config = {
-      type: "line",
-      data: data,
-      options: {
-        responsive: true,
-        plugins: {
-          title: {
-            display: true,
-            text: "نمودار فروش یک سال گذشته",
-          },
-        },
-        interaction: {
-          intersect: false,
-        },
-        scales: {
-          x: {
-            display: true,
-            title: {
-              display: true,
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'نمودار فروش یک سال گذشته'
+                },
             },
-          },
-          y: {
-            display: true,
-            title: {
-              display: true,
-              text: " میلیون تومان",
+            interaction: {
+                intersect: false,
             },
-          },
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        // text: 'زمان'
+                    }
+                },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: ' میلیون تومان'
+                    },
+                    // suggestedMin: -10,
+                    // suggestedMax: 200
+                }
+            }
         },
-      },
     };
 
-    // Destroy previous chart instance if it exists
-    if (chartInstanceRef.current) {
-      chartInstanceRef.current.destroy();
-    }
+    const ctx = document.getElementById('myChart').getContext('2d');
+    chart = new Chart(ctx , config)
+}
 
-    if (chartRef.current) {
-      chartInstanceRef.current = new Chart(chartRef.current, config);
-    }
-
-    return () => {
-      if (chartInstanceRef.current) {
-        chartInstanceRef.current.destroy();
-        chartInstanceRef.current = null;
-      }
-    };
-  }, [labels, datapoints]);
-
-  return <canvas ref={chartRef} height="195"></canvas>;
+export const destroyChart = ()=>{
+    chart.destroy()
 }

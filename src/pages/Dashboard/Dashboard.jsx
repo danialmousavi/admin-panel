@@ -1,16 +1,8 @@
-import React, { useEffect, useRef } from "react";
-import DashboardTable from "./DashboardTable";
 import DashboardCard from "./DashboardCard";
-import Chart from "chart.js/auto";
-import DashboardChart from "./DashboardChart";
+import ProductTable from "./ProductTable";
+import SaleChart from "./SaleChart";
 
 export default function Dashboard() {
-const labels = [
-  "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
-  "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"
-];
-const datapoints = [0, 20, 20, 60, 60, 120, 180, 120, 125, 105, 110, 170];
-
 
   return (
     <div className="row">
@@ -44,11 +36,9 @@ const datapoints = [0, 20, 20, 60, 60, 120, 180, 120, 125, 105, 110, 170];
       />
 
       <div className="row">
-        <DashboardTable />
+        <ProductTable/>
 
-        <div className="col-12 col-lg-6">
-            <DashboardChart labels={labels} datapoints={datapoints}/>
-        </div>
+        <SaleChart/>
       </div>
     </div>
   );
