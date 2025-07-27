@@ -1,12 +1,12 @@
 import React from "react";
 
-export default function DashboardCard({title,desc,icon,lastWeek,lastMonth}) {
+export default function DashboardCard({title,desc,icon,lastWeek,lastMonth,today}) {
   return (
     <div className="col-12 col-md-6 col-lg-3 dashboard_card_parent">
       <div className="card text-dark bg-info mb-3 dashboard_card">
         <div className="card-body row">
           <div className="col-9">
-            <h4>7</h4>
+            <h4>{today}</h4>
             <h6 className="card-title text_truncate">{title}</h6>
             <small className="card-title text_truncate">
                 {desc}
